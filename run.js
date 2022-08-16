@@ -6,6 +6,13 @@
   const STEP_START = 0.1;
   const PROPERTY = 'offsetWidth';
 
+  const asyncForEach = async (array, callback) => {
+    for (let index = 0; index < array.length; index += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await callback(array[index], index, array);
+    }
+  };
+
   const findFallbackFont = async (font, category, document) => {
     console.log(`Attempt to find fallback for font ${font}`);
 
@@ -96,13 +103,13 @@
     document.fonts.forEach((f) => { fonts[f.family] = f;});
 
     const fallbacks = [];
-    for (const font in fonts) {
+    asyncForEach(Object.keys(fonts), async (font) => {
       try {
-        fallbacks.push(findFallbackFont(font, fonts[font].category, document));
+        fallbacks.push(await findFallbackFont(font, fonts[font].category, document));
       } catch (e) {
         console.log(e);
       }
-    }
+    });
 
     return fallbacks;
   }
