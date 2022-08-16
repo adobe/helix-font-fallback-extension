@@ -1,27 +1,24 @@
-const findFallbacks = async () => {
+(() => {
   // config
   const TEXT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tortor purus, vulputate non euismod vitae, porttitor vitae leo. Sed ornare posuere ex in porttitor. Nunc tempor mollis ipsum, a fringilla lectus consequat nec. Morbi vitae bibendum dolor, sit amet commodo purus. Quisque volutpat a tellus ut lacinia. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nulla gravida malesuada libero sed ullamcorper. Nam et vestibulum lacus. Donec blandit est a tempor eleifend. Nullam non diam lobortis, lacinia lorem nec, lacinia arcu.';
   const MAX_STEPS = 1000;
   const ADJUST_START = 100;
   const STEP_START = 0.1;
-  const property = 'offsetWidth';
+  const PROPERTY = 'offsetWidth';
 
-  const fonts = {};
-  document.fonts.forEach((f) => { fonts[f.family] = f;});
-
-  const el = document.createElement('p');
-  document.body.append(el);
-
-  el.innerHTML = TEXT;
-  el.style['white-space'] = 'pre';
-  el.style['display'] = 'inline-block';
-
-  const fallbacks = [];
-  for (const font in fonts) {
+  const findFallbackFont = async (font, category, document) => {
     console.log(`Attempt to find fallback for font ${font}`);
+
+    const el = document.createElement('p');
+    document.body.append(el);
+
+    el.innerHTML = TEXT;
+    el.style['white-space'] = 'pre';
+    el.style['display'] = 'inline-block';
+
     el.style['font-family'] = font;
 
-    const initial = el[property];
+    const initial = el[PROPERTY];
     console.log('initial: ' + initial);
 
     el.style['font-family'] = 'fallbackfont';
@@ -37,7 +34,7 @@ const findFallbacks = async () => {
     const adjusts = [];
 
     const fallback = 'Arial';
-    if (fonts[font].category === 'serif') {
+    if (category === 'serif') {
       fallback = 'Times New Roman';
     }
 
@@ -48,7 +45,7 @@ const findFallbacks = async () => {
       document.fonts.add(font);
 
       //console.log(`Values (current / initial): ${el[property]} / ${initial}`);
-      diff = el[property] - initial;
+      diff = el[PROPERTY] - initial;
 
       if (diff === 0) break;
       
@@ -80,36 +77,48 @@ const findFallbacks = async () => {
       steps++;
     } while (steps < MAX_STEPS && step > 0.001);
 
+    el.remove();
+
     if (steps < MAX_STEPS) {
-      fallbacks.push({
+      return {
         font,
         fallback,
         adjust,
         steps,
-      });
-
-      console.log(`Found an adjust at: ${adjust} (${el[property]} / ${initial}). Nb of steps: ${steps}.`);
-    } else {
-      console.error(`Could not adjust font ${font}: ${adjust} (${el[property]} / ${initial})`);
+      };
     }
+    throw new Error(`Could not find font adjust for "${font}": ${adjust} (${el[PROPERTY]} / ${initial})`);
   }
 
-  el.remove();
+  const findForAll = async () => {
 
-  return fallbacks;
-}
+    const fonts = {};
+    document.fonts.forEach((f) => { fonts[f.family] = f;});
 
-const main = async () => {
-  const fallbacks = await findFallbacks();
+    const fallbacks = [];
+    for (const font in fonts) {
+      try {
+        fallbacks.push(findFallbackFont(font, fonts[font].category), document);
+      } catch (e) {
+        console.log(e);
+      }
+    }
 
-  console.log('Here are your fallbacks:');
-  fallbacks.forEach((f) => {
-    console.log(`@font-face {
-  font-family: "${f.font}-fallback";
-  size-adjust: ${f.adjust}%;
-  src: local("${f.fallback}");
-  }`);
-  });
-};
+    return fallbacks;
+  }
 
-main();
+  const main = async () => {
+    const fallbacks = await findForAll();
+
+    console.log('Here are your fallbacks:');
+    fallbacks.forEach((f) => {
+      console.log(`@font-face {
+    font-family: "${f.font}-fallback";
+    size-adjust: ${f.adjust}%;
+    src: local("${f.fallback}");
+    }`);
+    });
+  };
+
+  main();
+})();
