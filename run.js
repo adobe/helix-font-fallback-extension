@@ -14,7 +14,6 @@
   };
 
   const findFallbackFont = async (font, fallback, document) => {
-    debugger;
     console.log(`Attempt to find fallback for font ${font}`);
 
     const el = document.createElement('p');
