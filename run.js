@@ -103,7 +103,7 @@
     document.fonts.forEach((f) => { fonts[f.family] = f;});
 
     const fallbacks = [];
-    asyncForEach(Object.keys(fonts), async (font) => {
+    await asyncForEach(Object.keys(fonts), async (font) => {
       try {
         fallbacks.push(await findFallbackFont(font, fonts[font].category, document));
       } catch (e) {
