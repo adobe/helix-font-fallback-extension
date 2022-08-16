@@ -13,7 +13,7 @@
     }
   };
 
-  const findFallbackFont = async (font, category, document) => {
+  const findFallbackFont = async (font, document) => {
     console.log(`Attempt to find fallback for font ${font}`);
 
     const el = document.createElement('p');
@@ -41,9 +41,9 @@
     const adjusts = [];
 
     const fallback = 'Arial';
-    if (category === 'serif') {
-      fallback = 'Times New Roman';
-    }
+    // if (category === 'serif') {
+    //   fallback = 'Times New Roman';
+    // }
 
     do {
       // console.log(`Trying with adjust: ${adjust}`);
@@ -105,7 +105,7 @@
     const fallbacks = [];
     await asyncForEach(Object.keys(fonts), async (font) => {
       try {
-        fallbacks.push(await findFallbackFont(font, fonts[font].category, document));
+        fallbacks.push(await findFallbackFont(font, document));
       } catch (e) {
         console.log(e);
       }
