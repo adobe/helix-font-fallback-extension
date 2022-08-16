@@ -99,13 +99,17 @@ const findFallbacks = async () => {
   return fallbacks;
 }
 
-const fallbacks = await findFallbacks();
+const main = async () => {
+  const fallbacks = await findFallbacks();
 
-console.log('Here are your fallbacks:');
-fallbacks.forEach((f) => {
-  console.log(`@font-face {
-font-family: "${f.font}-fallback";
-size-adjust: ${f.adjust}%;
-src: local("${f.fallback}");
-}`);
-});
+  console.log('Here are your fallbacks:');
+  fallbacks.forEach((f) => {
+    console.log(`@font-face {
+  font-family: "${f.font}-fallback";
+  size-adjust: ${f.adjust}%;
+  src: local("${f.fallback}");
+  }`);
+  });
+};
+
+main();
