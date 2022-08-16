@@ -98,7 +98,7 @@
     const fallbacks = [];
     for (const font in fonts) {
       try {
-        fallbacks.push(findFallbackFont(font, fonts[font].category), document);
+        fallbacks.push(findFallbackFont(font, fonts[font].category, document));
       } catch (e) {
         console.log(e);
       }
