@@ -13,7 +13,8 @@
     }
   };
 
-  const findFallbackFont = async (font, document) => {
+  const findFallbackFont = async (font, fallback, document) => {
+    debugger;
     console.log(`Attempt to find fallback for font ${font}`);
 
     const el = document.createElement('p');
@@ -28,7 +29,8 @@
     const initial = el[PROPERTY];
     console.log('initial: ' + initial);
 
-    el.style['font-family'] = 'fallbackfont';
+    const fallbackFont = `${font}-fallback`;
+    el.style['font-family'] = fallbackFont;
     
     let steps = 0;
     let adjust = ADJUST_START;
@@ -40,18 +42,13 @@
     const diffs = [];
     const adjusts = [];
 
-    const fallback = 'Arial';
-    // if (category === 'serif') {
-    //   fallback = 'Times New Roman';
-    // }
-
     do {
       // console.log(`Trying with adjust: ${adjust}`);
-      const font = new FontFace('fallbackfont', `local("${fallback}")`, { sizeAdjust: `${adjust}%` });
+      const font = new FontFace(fallbackFont, `local("${fallback}")`, { sizeAdjust: `${adjust}%` });
       await font.load();
       document.fonts.add(font);
 
-      //console.log(`Values (current / initial): ${el[property]} / ${initial}`);
+      // console.log(`Values (current / initial): ${el[PROPERTY]} / ${initial}`);
       diff = el[PROPERTY] - initial;
 
       if (diff === 0) break;
@@ -105,7 +102,8 @@
     const fallbacks = [];
     await asyncForEach(Object.keys(fonts), async (font) => {
       try {
-        fallbacks.push(await findFallbackFont(font, document));
+        const fallback = window.prompt(`What is the default font to use as basis for ${font}?`, 'Arial')
+        fallbacks.push(await findFallbackFont(font, fallback, document));
       } catch (e) {
         console.log(e);
       }
