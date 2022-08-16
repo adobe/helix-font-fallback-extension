@@ -1,8 +1,9 @@
 # Font fallback
 
-Computes the fallback font for the fonts used on a page in order to preserve the CLS.
+Computes the fallback font for all the fonts used on a page in order to preserve the [CLS](https://web.dev/cls/).
 
-Inspired from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Moul
+Detailled explanations: https://www.industrialempathy.com/posts/high-performance-web-font-loading/
+Code is inspired from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat
 
 ## Usage
 
@@ -16,4 +17,4 @@ javascript: (() => {
 })();
 ```
 
-On any website, run the bookmarklet and check the console for the output.
+On any website, run the bookmarklet and check the console for the output. The generated fontfaces can be used as fallback font until the real font is loaded and still preserve the [CLS](https://web.dev/cls/).
