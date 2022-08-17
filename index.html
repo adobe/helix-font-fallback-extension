@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="./css/pico.classless.min.css">
+    <style>
+      body {
+        min-width: 780px;
+        min-height: 600px;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <h1>Font Fallback</h1>
+      <p>Compute the ideal font fallback for the current site to prevent <a href="https://web.dev/cls/" target="_blank">CLS</a>.</p>
+      <div id="loader">Analysing current site fonts... <progress indeterminate="true"></progress></div>
+      <div id="fonts" class="hidden">
+        <form>
+          <p>Specify the best default font to use (visually the closest to the site font):</p>
+          <div class="grid"></div>
+          <button id="compute">Compute fallback fonts</button>
+        </form>
+      </div>
+      <div id="computing" class="hidden">Computing... <progress indeterminate="true"></progress></div>
+      <div id="results" class="hidden">
+        <pre></pre>
+        <button id="copy" class="hidden">Copy to clipboard</button>
+      </div>
+      <div id="nofonts" class="hidden">
+        <p>No fonts found on this page!</p>
+      </div>
+    </main>
+    <script src="./js/ui.js"></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "Font fallback",
+  "description": "Compute font fallbacks for a given font family and font weight.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "index.html"
+  },
+  "permissions": ["storage", "activeTab", "scripting", "unlimitedStorage"]
+}
