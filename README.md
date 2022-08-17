@@ -7,6 +7,15 @@ Code is inspired from https://www.industrialempathy.com/perfect-ish-font-fallbac
 
 ## Usage
 
+### As a Chrome extension
+
+```
+git clone https://github.com/kptdobe/font-fallback
+```
+
+Load the extension as an local unpacked extension - see [instructions here](https://developer.chrome.com/docs/extensions/mv3/getstarted/#unpacked)
+
+### As a bookmarklet
 Add the following bookmarklet to your browser:
 
 ```js
