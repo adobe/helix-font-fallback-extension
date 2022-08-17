@@ -5,7 +5,9 @@ const NOFONTS_PANEL = document.getElementById('nofonts');
 const FONTS_PANEL = document.getElementById('fonts');
 const COMPUTING_PANEL = document.getElementById('computing');
 const RESULTS_PANEL = document.getElementById('results');
+
 const COMPUTE_BUTTON = document.getElementById('compute');
+const COPY_BUTTON = document.getElementById('copy');
 
 const FONTS_GRID = document.querySelector('#fonts .grid');
 const RESULTS_CODE = document.querySelector('#results pre');
@@ -23,15 +25,15 @@ const getCurrentTab = async () => {
 }
 
 const log = async (...arguments) => {
-  // const tab = await getCurrentTab();
+  const tab = await getCurrentTab();
 
-  // chrome.scripting.executeScript({
-  //   target: { tabId: tab.id },
-  //   func: (...arguments) => {
-  //     console.log('[from extension]', ...arguments);
-  //   },
-  //   args: arguments.filter(arg => typeof arg !== 'undefined'),
-  // });
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: (...arguments) => {
+      console.log('[from extension]', ...arguments);
+    },
+    args: arguments.filter(arg => typeof arg !== 'undefined'),
+  });
 }
 
 const getDefaultFallbackFontSelect = (id) => {
@@ -136,8 +138,17 @@ const compute = async (event) => {
   });
   RESULTS_CODE.innerHTML += '\n';
 
+  COPY_BUTTON.classList.remove('hidden');
   COMPUTING_PANEL.classList.add('hidden');
   
+}
+const copy = async () => {
+  const textarea = document.createElement('textarea');
+  textarea.value = RESULTS_CODE.innerHTML;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand('copy');
+  textarea.remove();
 }
 
 const load = async () => {
@@ -165,6 +176,7 @@ const load = async () => {
   LOADER_PANEL.classList.add('hidden');
   if (hasFonts) {
     COMPUTE_BUTTON.addEventListener('click', compute);
+    COPY_BUTTON.addEventListener('click', copy);
     for (const family in fonts) {
       const weigths = fonts[family].join(', ');
       const id = family;
