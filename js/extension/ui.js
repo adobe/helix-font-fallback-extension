@@ -138,7 +138,7 @@ const compute = async (event) => {
       try {
         const { adjust, name } = await promise;
       
-        RESULTS_CODE.innerHTML += getFontFaceOutput(family, weight, adjust, name, fallback);
+        RESULTS_CODE.innerHTML += getFontFaceOutput(family, weight, name, adjust, fallback);
         
         const label = document.createElement('label');
         label.innerHTML = `Replace <b>${family} (${weight})</b> by <b>${name}</b>`;
