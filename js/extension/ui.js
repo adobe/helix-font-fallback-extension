@@ -98,7 +98,11 @@ const compute = async (event) => {
 
   await asyncForEach(Object.keys(fonts), async (family) => {
     const weigths = fonts[family];
-    const fallback = document.getElementById(`fallback-${family}`).value
+    const fallback = document.getElementById(`fallback-${family}`).value;
+    const doProcess = document.getElementById(`process-${family}`).checked;
+
+    if (!doProcess) return;
+
     log(`Computing fallback for ${family} with fallback ${fallback}`);
     await asyncForEach(weigths, async (weight) => {
       COMPUTING_PANEL.firstChild.textContent = `Computing fallback for ${family} (${weight})...`;
@@ -229,6 +233,12 @@ const load = async () => {
       const label = document.createElement('label');
       label.for = id;
       label.innerText = `${family} (${weigths})`;
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = 'process-' + family;
+      checkbox.checked = true;
+      label.prepend(checkbox);
 
       const select = getDefaultFallbackFontSelect(id);
       label.appendChild(select);
