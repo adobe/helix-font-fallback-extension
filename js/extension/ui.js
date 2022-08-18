@@ -10,6 +10,7 @@ const RESULTS_PANEL = document.getElementById('results');
 
 const COMPUTE_BUTTON = document.getElementById('compute');
 const COPY_BUTTON = document.getElementById('copy');
+const BACK_BUTTON = document.getElementById('back');
 
 const FONTS_GRID = document.querySelector('#fonts .grid');
 const RESULTS_CODE = document.querySelector('#results pre');
@@ -201,6 +202,11 @@ const copy = async () => {
   textarea.remove();
 }
 
+const back = () => {
+  RESULTS_PANEL.classList.add('hidden');
+  FONTS_PANEL.classList.remove('hidden');
+}
+
 const load = async () => {
   const tab = await getCurrentTab();
 
@@ -227,6 +233,7 @@ const load = async () => {
   if (hasFonts) {
     COMPUTE_BUTTON.addEventListener('click', compute);
     COPY_BUTTON.addEventListener('click', copy);
+    BACK_BUTTON.addEventListener('click', back);
     for (const family in fonts) {
       const weigths = fonts[family].join(', ');
       const id = family;

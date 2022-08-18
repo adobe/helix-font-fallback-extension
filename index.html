@@ -22,7 +22,7 @@
         <form>
           <p>Specify the best default font to use (visually the closest to the site font):</p>
           <div class="grid"></div>
-          <button id="compute">Compute fallback fonts</button>
+          <a href="#" role="button" id="compute">Compute fallback fonts</a>
         </form>
       </div>
       <div id="computing" class="hidden">Computing... <progress indeterminate="true"></progress></div>
@@ -31,17 +31,16 @@
           <summary>CSS</summary>
           <div>
             <pre></pre>
-            <button id="copy" class="hidden">Copy to clipboard</button>
+            <a href="#" role="button" id="copy" class="hidden">Copy to clipboard</a>
           </div>
         </details>
         <details>
           <summary>Simulation</summary>
           <div>
-            <form>
-              
-            </form>
+            <form></form>
           </div>
         </details>
+        <a  href="#" role="button" id="back">Back</a>
       </div>
       <div id="nofonts" class="hidden">
         <p>No fonts found on this page!</p>
