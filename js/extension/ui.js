@@ -1,3 +1,5 @@
+import { getFontFaceOutput } from '../business/fonts.js';
+
 const fonts = {};
 
 const LOADER_PANEL = document.getElementById('loader');
@@ -24,12 +26,12 @@ const getCurrentTab = async () => {
   return tab;
 }
 
-const log = async (...arguments) => {
+const log = async function () {
   const tab = await getCurrentTab();
 
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    func: (...arguments) => {
+    func: function () {
       console.log('[from extension]', ...arguments);
     },
     args: arguments.filter(arg => typeof arg !== 'undefined'),
@@ -134,13 +136,7 @@ const compute = async (event) => {
       try {
         const { adjust, name } = await promise;
       
-        RESULTS_CODE.innerHTML += `
-        /* fallback font for ${family} (${weight}) */
-        @font-face {
-          font-family: "${name}";
-          size-adjust: ${adjust}%;
-          src: local("${fallback}");
-        };\n`;
+        RESULTS_CODE.innerHTML += getFontFaceOutput(family, weight, adjust, name);
       } catch (error) {
         RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${family} (${weight}): \n${error}\n\n`;
       }

@@ -89,4 +89,14 @@ const findFallbackFont = async (font, weight, fallback) => {
   throw new Error(`Could not find font adjust for "${font}": ${adjust} (${el[PROPERTY]} / ${initial})`);
 }
 
-export { findFallbackFont };
+const getFontFaceOutput = (family, weight, newname, adjust, fallback) => {
+  return `
+  /* fallback font for ${family} (${weight}) */
+  @font-face {
+    font-family: "${newname}";
+    size-adjust: ${adjust}%;
+    src: local("${fallback}");
+  };\n`;
+}
+
+export { findFallbackFont, getFontFaceOutput };
