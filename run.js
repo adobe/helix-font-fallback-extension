@@ -23,13 +23,13 @@
     el.style['white-space'] = 'pre';
     el.style['display'] = 'inline-block';
 
-    el.style['font-family'] = font;
+    el.style['font-family'] = `"${font}"`;
 
     const initial = el[PROPERTY];
     console.log('initial: ' + initial);
 
     const fallbackFont = `${font}-fallback`;
-    el.style['font-family'] = fallbackFont;
+    el.style['font-family'] = `"${fallbackFont}"`;
     
     let steps = 0;
     let adjust = ADJUST_START;
