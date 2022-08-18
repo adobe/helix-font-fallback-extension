@@ -8,7 +8,7 @@
   },
   "permissions": ["storage", "activeTab", "scripting", "unlimitedStorage"],
   "web_accessible_resources": [{
-    "resources": ["js/business/fonts.js"],
+    "resources": ["js/logic/fonts.js"],
     "matches": ["*://*/*"]
   }]
 }

@@ -1,7 +1,7 @@
 (async () => {
   try {
 
-    const src = chrome.runtime.getURL('/js/business/fonts.js');
+    const src = chrome.runtime.getURL('/js/logic/fonts.js');
     const { findFallbackFont } = await import(src);
 
     const { input } = await chrome.storage.local.get('input');

@@ -1,4 +1,4 @@
-import { getFontFaceOutput } from '../business/fonts.js';
+import { getFontFaceOutput } from '../logic/fonts.js';
 
 const fonts = {};
 
@@ -138,7 +138,7 @@ const compute = async (event) => {
       try {
         const { adjust, name } = await promise;
       
-        RESULTS_CODE.innerHTML += getFontFaceOutput(family, weight, adjust, name);
+        RESULTS_CODE.innerHTML += getFontFaceOutput(family, weight, adjust, name, fallback);
         
         const label = document.createElement('label');
         label.innerHTML = `Replace <b>${family} (${weight})</b> by <b>${name}</b>`;
