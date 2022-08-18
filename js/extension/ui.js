@@ -107,33 +107,43 @@ const compute = async (event) => {
         }
       });
 
-      const promise = new Promise((resolve) => {
+      const promise = new Promise((resolve, reject) => {
         // check until the result is available
         const interval = window.setInterval(async () => {
-          const { output } = await chrome.storage.local.get('output');
+          const { output, error } = await chrome.storage.local.get(['output', 'error']);
           log('Checking storage for output', output);
           if (output) {
             window.clearInterval(interval);
             await chrome.storage.local.remove('output');
             resolve(output);
+          } else {
+            if (error) {
+              window.clearInterval(interval);
+              await chrome.storage.local.remove('error');
+              reject(error);
+            }
           }
         }, 1000);
       });
       
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        files: ['./js/script-computefallbackfont.js'],
+        files: ['./js/scripts/computefallbackfont.js'],
       });
 
-      const { adjust, name } = await promise;
-    
-      RESULTS_CODE.innerHTML += `
-      /* fallback font for ${family} (${weight}) */
-      @font-face {
-        font-family: "${name}";
-        size-adjust: ${adjust}%;
-        src: local("${fallback}");
-      };\n`;
+      try {
+        const { adjust, name } = await promise;
+      
+        RESULTS_CODE.innerHTML += `
+        /* fallback font for ${family} (${weight}) */
+        @font-face {
+          font-family: "${name}";
+          size-adjust: ${adjust}%;
+          src: local("${fallback}");
+        };\n`;
+      } catch (error) {
+        RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${family} (${weight}): \n${error}\n\n`;
+      }
     });
   });
   RESULTS_CODE.innerHTML += '\n';
@@ -156,7 +166,7 @@ const load = async () => {
 
   const results = await chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    files: ['./js/script-getfonts.js'],
+    files: ['./js/scripts/getfonts.js'],
   });
 
   let hasFonts = false;

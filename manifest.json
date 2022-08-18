@@ -6,5 +6,9 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": ["storage", "activeTab", "scripting", "unlimitedStorage"]
+  "permissions": ["storage", "activeTab", "scripting", "unlimitedStorage"],
+  "web_accessible_resources": [{
+    "resources": [ "js/modules/fonts.js"],
+    "matches": ["*://*/*"]
+  }]
 }
