@@ -18,7 +18,8 @@ const findFallbackFont = async (font, weight, fallback) => {
   el.style['font-weight'] = weight;
 
   const initial = el[PROPERTY];
-  console.log('initial: ' + initial);
+  
+  console.log(`Initial value for property ${PROPERTY}: ${initial}`);
 
   const fallbackFont = `${font}-${weight}-fallback`;
   el.style['font-family'] = fallbackFont;
@@ -51,7 +52,7 @@ const findFallbackFont = async (font, weight, fallback) => {
         // sign changed, need to reduce step size
         step = step / 10;
         step1 = 1 / step;
-        console.log(`Adjusting step (minus): ${step} / ${step1}`);
+        console.log(`Adjusting step (minus): ${step}`);
         adjust = ((adjusts[adjusts.length - 1] * step1 ) - (step * step1)) / step1;
       } else {
         adjust = ((adjust * step1) - (step * step1)) / step1;
