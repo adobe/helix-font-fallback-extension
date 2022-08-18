@@ -205,6 +205,7 @@ const copy = async () => {
 const back = () => {
   RESULTS_PANEL.classList.add('hidden');
   FONTS_PANEL.classList.remove('hidden');
+  COPY_BUTTON.classList.add('hidden');
 }
 
 const load = async () => {
