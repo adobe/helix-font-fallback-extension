@@ -6,7 +6,7 @@
     .from(document.fonts)
     .map(font => {
       const id = font.family + '-' + font.weight;
-      if (!unique.has(id)) {
+      if (!unique.has(id) && !font.family.includes('-fallback')) {
         unique.add(id);
         return { 
           family: font.family,

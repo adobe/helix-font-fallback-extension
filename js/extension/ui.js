@@ -13,6 +13,7 @@ const COPY_BUTTON = document.getElementById('copy');
 
 const FONTS_GRID = document.querySelector('#fonts .grid');
 const RESULTS_CODE = document.querySelector('#results pre');
+const RESULTS_SIMULATION = document.querySelector('#results form');
 
 const asyncForEach = async (array, callback) => {
   for (let index = 0; index < array.length; index += 1) {
@@ -26,15 +27,15 @@ const getCurrentTab = async () => {
   return tab;
 }
 
-const log = async function () {
+const log = async function (a, b, c, d) {
   const tab = await getCurrentTab();
 
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    func: function () {
-      console.log('[from extension]', ...arguments);
+    func: function (a, b, c, d) {
+      console.log('[from extension]', a, b, c, d);
     },
-    args: arguments.filter(arg => typeof arg !== 'undefined'),
+    args: [a || '', b || '', c || '', d || ''],
   });
 }
 
@@ -90,6 +91,7 @@ const compute = async (event) => {
   FONTS_PANEL.classList.add('hidden');
   COMPUTING_PANEL.classList.remove('hidden');
   RESULTS_CODE.innerHTML = '';
+  RESULTS_SIMULATION.innerHTML = '';
   RESULTS_PANEL.classList.remove('hidden');
 
   const tab = await getCurrentTab();
@@ -137,6 +139,44 @@ const compute = async (event) => {
         const { adjust, name } = await promise;
       
         RESULTS_CODE.innerHTML += getFontFaceOutput(family, weight, adjust, name);
+        
+        const label = document.createElement('label');
+        label.innerHTML = `Replace <b>${family} (${weight})</b> by <b>${name}</b>`;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = 'simulate-' + family + '-' + weight;
+        label.prepend(checkbox);
+
+        checkbox.addEventListener('change', async (event) => {
+          if (event.target.checked) {
+            await chrome.storage.local.set({ 
+              input: {
+                family,
+                weight,
+                apply: name,
+              }
+            });
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              files: ['./js/scripts/applyfont.js'],
+            });
+          } else {
+            await chrome.storage.local.set({ 
+              input: {
+                remove: name,
+              }
+            });
+
+            chrome.scripting.executeScript({
+              target: { tabId: tab.id },
+              files: ['./js/scripts/removefont.js'],
+            });
+          }
+        });
+
+        RESULTS_SIMULATION.append(label);
+
       } catch (error) {
         RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${family} (${weight}): \n${error}\n\n`;
       }

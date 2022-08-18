@@ -42,7 +42,7 @@ const findFallbackFont = async (font, weight, fallback) => {
     // console.log(`Values (current / initial): ${el[PROPERTY]} / ${initial}`);
     diff = el[PROPERTY] - initial;
 
-    document.fonts.delete(font);
+    // document.fonts.delete(font);
 
     if (diff === 0) break;
     
@@ -99,4 +99,21 @@ const getFontFaceOutput = (family, weight, newname, adjust, fallback) => {
   };\n`;
 }
 
-export { findFallbackFont, getFontFaceOutput };
+const getElementsUsingFont = (family, weight = null) => {
+  const elements = [];
+
+  document.querySelectorAll('*').forEach(function(el) {
+    const currentFamily = window.getComputedStyle(el).getPropertyValue('font-family');
+    const currentWeight = window.getComputedStyle(el).getPropertyValue('font-weight');
+
+    if (currentFamily.includes(family)) {
+      if (weight === null || weight === currentWeight) {
+        elements.push(el);
+      }
+    }
+  });
+
+  return elements;
+}
+
+export { findFallbackFont, getFontFaceOutput, getElementsUsingFont };
