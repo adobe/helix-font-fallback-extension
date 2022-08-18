@@ -101,19 +101,22 @@ const getFontFaceOutput = (family, weight, newname, adjust, fallback) => {
 }
 
 const getElementsUsingFont = (family, weight = null) => {
+  console.log(`Searching for elements using font ${family} (${weight})`);
   const elements = [];
 
+  const familyLC = family.toLowerCase().trim()
   document.querySelectorAll('*').forEach(function(el) {
-    const currentFamily = window.getComputedStyle(el).getPropertyValue('font-family');
+    const currentFamily = window.getComputedStyle(el).getPropertyValue('font-family').toLowerCase().trim();
     const currentWeight = window.getComputedStyle(el).getPropertyValue('font-weight');
 
-    if (currentFamily.includes(family)) {
+    if (currentFamily.includes(familyLC)) {
       if (weight === null || weight === currentWeight) {
         elements.push(el);
       }
     }
   });
 
+  console.log(`Found ${elements.length} elements.`, elements);
   return elements;
 }
 
