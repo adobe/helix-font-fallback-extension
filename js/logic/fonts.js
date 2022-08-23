@@ -97,7 +97,7 @@ const getFontFaceOutput = (family, weight, newname, adjust, fallback) => {
     font-family: "${newname}";
     size-adjust: ${adjust}%;
     src: local("${fallback}");
-  };\n`;
+  }\n`;
 }
 
 const getElementsUsingFont = (family, weight = null) => {
