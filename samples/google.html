@@ -1,19 +1,33 @@
 <html>
   <head>
     <script src="./measure.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat">
+    <script>
+      const loadFont = (href, family) => {
+        // delay font loading to detect CLS
+        window.setTimeout(async () => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = href;
+          document.head.appendChild(link);
+          document.body.style.fontFamily = `"${family}"`;
+        }, 1000);
+      }
+
+      loadFont('https://fonts.googleapis.com/css2?family=Montserrat', 'Montserrat');
+    </script>
     <style>
       @font-face {
         font-family: "Montserrat-fallback";
-        /* size-adjust: 113.4%; /* from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat */
-        size-adjust: 111.211%; /* current project value */
+        size-adjust: 113.399%; /* from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat */
+
+        /* size-adjust: 111.311%; /* current project value */
         src: local("Arial");
       }
 
       body {
-        width: 500px;
+        /* width: 500px; */
         margin: auto;
-        font-family: "Montserrat", "Montserrat-fallback";
+        font-family: "Montserrat-fallback";
         line-height: 1.5em;
       }
     </style>
@@ -49,8 +63,8 @@
           <p>Acts as a summary artifact in the technical portfolio of the software designer(s).</p>
         </li>
       </ul>
-      <h2 id="anatomy-of-a-design-doc">Anatomy of a design doc <a href="#anatomy-of-a-design-doc" class="direct-link">#</a>
-      </h2>
+      <!-- <h2 id="anatomy-of-a-design-doc">Anatomy of a design doc <a href="#anatomy-of-a-design-doc" class="direct-link">#</a>
+      </h2> -->
       <p>Design docs are informal documents and thus don't follow a strict guideline for their content. Rule #1 is: Write them
         in whatever form makes the most sense for the particular project.</p>
       <p>Having said that, a certain structure has established itself as really useful.</p>
