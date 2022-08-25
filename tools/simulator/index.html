@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="../../css/pico.min.css">
+    <style>
+      body {
+        min-width: 780px;
+        min-height: 600px;
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <h1>Font Fallback simulator</h1>
+      <p>Simulate your font fallbacks to prevent <a href="https://web.dev/cls/" target="_blank">CLS</a>.</p>
+      <form>
+        <div class="grid">
+          <div>
+            <label for="family">
+              Font family
+              <input type="text" id="family" placeholder="Font Family" value="Montserrat" required>
+            </label>
+            <label for="url">
+              Font URL
+              <input type="text" id="url" placeholder="Font URL" value="https://fonts.googleapis.com/css2?family=Montserrat">
+            </label>
+            <label for="adjust">
+              Font Size Adjust
+              <input type="number" id="adjust" placeholder="Font Size Adjust" value="100">
+            </label>
+          </div>
+          <div>
+            <label for="local">
+              Local Font fallback
+              <select id="local" value="Arial" required>
+                <option value="Arial">Arial (sans-serif)</option>
+                <option value="Verdana">Verdana (sans-serif)</option>
+                <option value="Helvetica">Helvetica (sans-serif)</option>
+                <option value="Tahoma">Tahoma (sans-serif)</option>
+                <option value="Trebuchet MS">Trebuchet MS (sans-serif)</option>
+                <option value="Times New Roman">Times New Roman (serif)</option>
+                <option value="Georgia">Georgia (serif)</option>
+                <option value="Courier New">Courier New (monospace)</option>
+              </select>
+            </label>
+            <label for="width">
+              Text Line Height
+              <input type="text" id="lineHeight" placeholder="Line Height" value="1.5em">
+            </label>
+            <label for="width">
+              Body Width
+              <input type="text" id="width" placeholder="Body width" value="100%">
+            </label>
+          </div>
+        </div>
+        <a href="#" role="button" id="preview">Preview</a>
+      </form>
+      <script>
+        const preview = document.getElementById('preview');
+        preview.addEventListener('click', () => {
+          const family = document.getElementById('family').value;
+          const url = document.getElementById('url').value;
+          const adjust = document.getElementById('adjust').value;
+          const local = document.getElementById('local').value;
+          const lineHeight = document.getElementById('lineHeight').value;
+          const width = document.getElementById('width').value;
+          
+          const target = new URL('./preview.html', window.location.href);
+          target.searchParams.set('family', family);
+          target.searchParams.set('url', url);
+          target.searchParams.set('adjust', adjust);
+          target.searchParams.set('local', local);
+          target.searchParams.set('lineHeight', lineHeight);
+          target.searchParams.set('width', width);
+          window.open(target.href, 'fontpreview');
+        });
+      </script>
+  </body>
+</html>

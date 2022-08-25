@@ -67,14 +67,8 @@ const getDefaultFallbackFontSelect = (id) => {
     name: 'Georgia',
     cat: 'serif', 
   }, {
-    name: 'Garamond',
-    cat: 'serif',
-  }, {
     name: 'Courier New',
     cat: 'monospace', 
-  }, {
-    name: 'Brush Script MT',
-    cat: 'cursive'
   }].forEach((font) => {
     const option = document.createElement('option');
     option.value = font.name;
