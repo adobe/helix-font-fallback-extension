@@ -4,7 +4,12 @@ new PerformanceObserver((entryList) => {
     // 500 ms input exclusion window
     if (entry.hadRecentInput) cls = 0;
     cls += entry.value;
-    console.log('CONSOLE - Current CLS value:', cls, entry);
+    entry.sources.forEach((source) => {
+      if (source.node?.style) {
+        source.node.style.border = '1px solid red';
+      }
+    });
+    // console.log('CONSOLE - Current CLS value:', cls, entry);
   }
 // the buffered flag enables observer to access entries from before the observer creation
 }).observe({type: 'layout-shift', buffered: false});

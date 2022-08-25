@@ -2,17 +2,25 @@
   <head>
     <script src="./measure.js"></script>
     <script>
+      
+
+      const u = new URL(window.location.href);
+
+      // parameters
+      const family = u.searchParams.get('family'); // your font family (required)
+      const url = u.searchParams.get('url') || ''; // your font url (optional)
+      const local = u.searchParams.get('local') || 'Arial'; // local font fallback (optional / default: Arial)
+      const adjust = u.searchParams.get('adjust') || 100; // font face adjustment (optional but recommended / default: 100)
+      const width = u.searchParams.get('width') || '100%'; // body width (optional / default: 100%)
+      const lineHeight = u.searchParams.get('lineHeight') || '1.5em'; // text line height (optional / default: 1.5em)
+
       const createFontface = async ({ family, src, adjust }) => {
         const font = new FontFace(family, src, { sizeAdjust: `${adjust}%` });
         await font.load();
         document.fonts.add(font);
       }
 
-      // createFontface({ family: 'Montserrat-fallback', src: 'local("Arial")', adjust: 113.399 }); /* from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat */
-      // createFontface({ family: 'Montserrat-fallback', src: 'local("Arial")', adjust: 111.311 }); /* current project value */
-
-      const u = new URL(window.location.href);
-      createFontface({ family: 'Montserrat-fallback', src: 'local("Arial")', adjust: u.searchParams.get('adjust') || 100 }); /* current project value */
+      createFontface({ family: `${family}-fallback`, src: `local("${local}")`, adjust }); /* current project value */
         
       const loadFont = (href, family) => {
         // delay font loading to detect CLS
@@ -25,18 +33,20 @@
         }, 1000);
       }
 
-      loadFont('https://fonts.googleapis.com/css2?family=Montserrat', 'Montserrat');
+      loadFont(url, family);
     </script>
     <style>
       body {
-        width: 500px;
         margin: auto;
-        font-family: "Montserrat-fallback";
-        line-height: 1.5em;
       }
     </style>
   </head>
   <body>
+    <script>
+      document.body.style.width = width;
+      document.body.style.lineHeight = lineHeight;
+      document.body.style.fontFamily = `${family}-fallback`;
+    </script>
     <div>
       <p>One of the key elements of Google's software engineering culture is the use of defining software designs through
         design docs. These are relatively informal documents that the primary author or authors of a software system or
