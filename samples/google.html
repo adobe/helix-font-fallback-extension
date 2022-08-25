@@ -2,6 +2,18 @@
   <head>
     <script src="./measure.js"></script>
     <script>
+      const createFontface = async ({ family, src, adjust }) => {
+        const font = new FontFace(family, src, { sizeAdjust: `${adjust}%` });
+        await font.load();
+        document.fonts.add(font);
+      }
+
+      // createFontface({ family: 'Montserrat-fallback', src: 'local("Arial")', adjust: 113.399 }); /* from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat */
+      // createFontface({ family: 'Montserrat-fallback', src: 'local("Arial")', adjust: 111.311 }); /* current project value */
+
+      const u = new URL(window.location.href);
+      createFontface({ family: 'Montserrat-fallback', src: 'local("Arial")', adjust: u.searchParams.get('adjust') || 100 }); /* current project value */
+        
       const loadFont = (href, family) => {
         // delay font loading to detect CLS
         window.setTimeout(async () => {
@@ -16,16 +28,8 @@
       loadFont('https://fonts.googleapis.com/css2?family=Montserrat', 'Montserrat');
     </script>
     <style>
-      @font-face {
-        font-family: "Montserrat-fallback";
-        size-adjust: 113.399%; /* from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat */
-
-        /* size-adjust: 111.311%; /* current project value */
-        src: local("Arial");
-      }
-
       body {
-        /* width: 500px; */
+        width: 500px;
         margin: auto;
         font-family: "Montserrat-fallback";
         line-height: 1.5em;
