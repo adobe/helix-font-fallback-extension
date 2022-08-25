@@ -1,9 +1,9 @@
-let cls = 0;
+window.cls = 0;
 new PerformanceObserver((entryList) => {
   for (const entry of entryList.getEntries()) {
     // 500 ms input exclusion window
     if (entry.hadRecentInput) cls = 0;
-    cls += entry.value;
+    window.cls += entry.value;
     entry.sources.forEach((source) => {
       if (window.markers !== 'no' && source.node?.style) {
         source.node.style.border = '1px solid red';
@@ -16,7 +16,7 @@ new PerformanceObserver((entryList) => {
 
 window.setInterval(() => {
   let c = document.querySelector('.cls');
-  const displayCLS = Math.round(cls * 10000) / 1000;
+
   if (!c) {
     c = document.createElement('div');
     c.className = 'cls';
@@ -28,6 +28,7 @@ window.setInterval(() => {
     document.body.appendChild(c);
   }
 
+  const displayCLS = Math.round(window.cls * 10000) / 1000;
   if (displayCLS > 0.25) {
     c.style['background-color'] = 'red';
   } else if (displayCLS > 0.1) {

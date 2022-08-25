@@ -2,8 +2,6 @@
   <head>
     <script src="./measure.js"></script>
     <script>
-      
-
       const u = new URL(window.location.href);
 
       // parameters
@@ -29,27 +27,33 @@
         
       const loadFont = (href, family) => {
         // delay font loading to detect CLS
-        window.setTimeout(async () => {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = href;
-          document.head.appendChild(link);
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+        link.addEventListener('load', () => {
+          console.log(`font ${family} loaded.`);
           window.setTimeout(() => {
-            document.body.style.fontFamily = `"${family}"`;
-          }, 1000);
-        }, 100);
+            console.log(`1s timeout, setting p style.`);
+            const p = document.createElement('p');
+            p.style.fontFamily = `"${family}"`;
+            p.innerHTML = 'preloading font...';
+            document.body.append(p);
+            window.setTimeout(() => {
+              console.log(`1s timeout, setting body style.`);
+              document.body.style.fontFamily = `"${family}"`;
+              p.remove();
+            }, 500);
+          }, 500);
+        });
       }
 
       loadFont(url, family);
     </script>
-    <style>
-      body {
-        margin: auto;
-      }
-    </style>
   </head>
   <body>
     <script>
+      document.body.style.margin = "auto";
       document.body.style.width = width;
       document.body.style.lineHeight = lineHeight;
       document.body.style.fontFamily = `${family}-fallback`;
@@ -84,8 +88,8 @@
           <p>Acts as a summary artifact in the technical portfolio of the software designer(s).</p>
         </li>
       </ul>
-      <!-- <h2 id="anatomy-of-a-design-doc">Anatomy of a design doc <a href="#anatomy-of-a-design-doc" class="direct-link">#</a>
-      </h2> -->
+      <h2 id="anatomy-of-a-design-doc">Anatomy of a design doc <a href="#anatomy-of-a-design-doc" class="direct-link">#</a>
+      </h2>
       <p>Design docs are informal documents and thus don't follow a strict guideline for their content. Rule #1 is: Write them
         in whatever form makes the most sense for the particular project.</p>
       <p>Having said that, a certain structure has established itself as really useful.</p>
