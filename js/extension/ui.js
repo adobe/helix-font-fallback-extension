@@ -24,7 +24,9 @@ const asyncForEach = async (array, callback) => {
 };
 
 const getCurrentTab = async () => {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const u = new URL(window.location.href);
+  const tabId = parseInt(u.searchParams.get('tabId'));
+  const tab = await chrome.tabs.get(tabId);
   return tab;
 }
 
