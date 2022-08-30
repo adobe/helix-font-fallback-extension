@@ -105,7 +105,7 @@ const getElementsUsingFont = (family, weight = null) => {
   const elements = [];
 
   const familyLC = family.toLowerCase().trim()
-  document.querySelectorAll('*').forEach(function(el) {
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, a, li, span').forEach(function(el) {
     const currentFamily = window.getComputedStyle(el).getPropertyValue('font-family').toLowerCase().trim();
     const currentWeight = window.getComputedStyle(el).getPropertyValue('font-weight');
 
