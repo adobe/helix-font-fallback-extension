@@ -1,0 +1,77 @@
+<html>
+  <head>
+    <script type="module">
+      import { findFallbackFont, getFontFaceOutput } from '../../js/logic/fonts.js';
+      
+      const DEFAULT_TEXT = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`;
+
+      const u = new URL(window.location.href);
+
+      // parameters
+      const family = u.searchParams.get('family'); // your font family (required)
+      const url = u.searchParams.get('url') || ''; // your font url (optional)
+      const local = u.searchParams.get('local') || 'Arial'; // local font fallback (optional / default: Arial)
+      const lineHeight = u.searchParams.get('lineHeight') || '1.5em'; // text line height (optional / default: 1.5em)
+      
+      const text = u.searchParams.get('text') || DEFAULT_TEXT; // default text (optional)
+      
+      const loadFont = (href, family, callback) => {
+        // delay font loading to detect CLS
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = href;
+        document.head.appendChild(link);
+        link.addEventListener('load', callback);
+      }
+
+      loadFont(url, family, () => {
+        window.setTimeout(() => {
+          // const p = document.querySelector('p');
+          document.querySelectorAll('p').forEach((p) => {
+            p.style.lineHeight = lineHeight;
+            p.style.fontFamily = `"${family}"`;
+            p.innerHTML = text;
+
+            window.setTimeout(async () => {
+              const fallback = await findFallbackFont({
+                family,
+                weight: 400,
+                fallback: local,
+                element: p,
+                removeElement: false,
+                property: 'offsetWidth',
+              });
+              
+              const c = document.createElement('div');
+              c.className = 'result';
+              
+              const pre = document.createElement('pre');
+              pre.innerText = getFontFaceOutput(fallback.font, fallback.weight || 400, fallback.name, fallback.adjust, fallback.fallback);
+              c.append(pre);
+              document.body.appendChild(c);
+            }, 500);
+          });
+        }, 500);
+
+      });
+    </script>
+    <style>
+      p {
+        white-space: pre;
+        display: inline-block;
+      }
+
+      .result {
+        background-color: lightblue;
+        position: absolute;
+        top: 150;
+        left: 50;
+        z-index: 9999;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <p></p>
+  </body>
+</html>

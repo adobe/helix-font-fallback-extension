@@ -32,15 +32,12 @@
         link.href = href;
         document.head.appendChild(link);
         link.addEventListener('load', () => {
-          console.log(`font ${family} loaded.`);
           window.setTimeout(() => {
-            console.log(`1s timeout, setting p style.`);
             const p = document.createElement('p');
             p.style.fontFamily = `"${family}"`;
-            p.innerHTML = 'preloading font...';
+            p.innerHTML = 'preloading font to avoid extra CLS on slow network...'; 
             document.body.append(p);
             window.setTimeout(() => {
-              console.log(`1s timeout, setting body style.`);
               document.body.style.fontFamily = `"${family}"`;
               p.remove();
             }, 500);

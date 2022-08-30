@@ -15,8 +15,8 @@
   </head>
   <body>
     <main class="container">
-      <h1>Font Fallback simulator</h1>
-      <p>Simulate your font fallbacks to prevent <a href="https://web.dev/cls/" target="_blank">CLS</a>.</p>
+      <h1>Font Fallback generator</h1>
+      <p>Generate a font fallback to prevent <a href="https://web.dev/cls/" target="_blank">CLS</a>.</p>
       <form>
         <div class="grid">
           <div>
@@ -27,10 +27,6 @@
             <label for="url">
               CSS with Font URL
               <input type="text" id="url" placeholder="Font URL" value="https://fonts.googleapis.com/css2?family=Montserrat">
-            </label>
-            <label for="adjust">
-              Font Size Adjust
-              <input type="number" id="adjust" placeholder="Font Size Adjust" value="100">
             </label>
           </div>
           <div>
@@ -51,31 +47,27 @@
               Text Line Height
               <input type="text" id="lineHeight" placeholder="Line Height" value="1.5em">
             </label>
-            <label for="width">
-              Body Width
-              <input type="text" id="width" placeholder="Body width" value="100%">
-            </label>
           </div>
         </div>
-        <a href="#" role="button" id="preview">Preview</a>
+        <label for="text">
+          Text
+          <textarea type="text" id="text" placeholder="Text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</textarea>
+        </label>
+        <a href="#" role="button" id="generate">Generate</a>
       </form>
       <script>
-        const preview = document.getElementById('preview');
-        preview.addEventListener('click', () => {
+        const generate = document.getElementById('generate');
+        generate.addEventListener('click', () => {
           const family = document.getElementById('family').value;
           const url = document.getElementById('url').value;
-          const adjust = document.getElementById('adjust').value;
           const local = document.getElementById('local').value;
           const lineHeight = document.getElementById('lineHeight').value;
-          const width = document.getElementById('width').value;
           
-          const target = new URL('./preview.html', window.location.href);
+          const target = new URL('./generate.html', window.location.href);
           target.searchParams.set('family', family);
           target.searchParams.set('url', url);
-          target.searchParams.set('adjust', adjust);
           target.searchParams.set('local', local);
           target.searchParams.set('lineHeight', lineHeight);
-          target.searchParams.set('width', width);
           window.open(target.href, 'fontpreview');
         });
       </script>

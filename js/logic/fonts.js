@@ -2,26 +2,26 @@ const TEXT = 'Where does it come from? Contrary to popular belief, Lorem Ipsum i
 const MAX_STEPS = 1000;
 const ADJUST_START = 100;
 const STEP_START = 0.1;
-const PROPERTY = 'offsetWidth';
 
-const findFallbackFont = async (font, weight, fallback) => {
-  console.log(`Attempt to find fallback for font ${font}`);
+const findFallbackFont = async ({ family, weight = 400, fallback, element: el, removeElement = true, property = 'offsetWidth'}) => {
+  console.log(`Attempt to find fallback for font ${family}`);
 
-  const el = document.createElement('p');
-  document.body.append(el);
+  if (!el) {
+    el = document.createElement('p');
+    document.body.append(el);
+    el.innerHTML = TEXT;
+    el.style['white-space'] = 'pre';
+    el.style['display'] = 'inline-block';
+  }
 
-  el.innerHTML = TEXT;
-  el.style['white-space'] = 'pre';
-  el.style['display'] = 'inline-block';
-
-  el.style['font-family'] = `"${font}"`;
+  el.style['font-family'] = `"${family}"`;
   el.style['font-weight'] = weight;
 
-  const initial = el[PROPERTY];
+  const initial = el[property];
   
-  console.log(`Initial value for property ${PROPERTY}: ${initial}`);
+  console.log(`Initial value for property ${property}: ${initial}`);
 
-  const fallbackFont = `${font}-${weight}-fallback`;
+  const fallbackFont = `${family}-${weight}-fallback`;
   el.style['font-family'] = `"${fallbackFont}"`;
   
   let steps = 0;
@@ -36,12 +36,12 @@ const findFallbackFont = async (font, weight, fallback) => {
 
   do {
     // console.log(`Trying with adjust: ${adjust}`);
-    const font = new FontFace(fallbackFont, `local("${fallback}")`, { sizeAdjust: `${adjust}%`, weight });
-    await font.load();
-    document.fonts.add(font);
+    const fontface = new FontFace(fallbackFont, `local("${fallback}")`, { sizeAdjust: `${adjust}%`, weight });
+    await fontface.load();
+    document.fonts.add(fontface);
 
-    // console.log(`Values (current / initial): ${el[PROPERTY]} / ${initial}`);
-    diff = el[PROPERTY] - initial;
+    // console.log(`Values (current / initial): ${el[property]} / ${initial}`);
+    diff = el[property] - initial;
 
     // document.fonts.delete(font);
 
@@ -52,7 +52,7 @@ const findFallbackFont = async (font, weight, fallback) => {
         // sign changed, need to reduce step size
         step = step / 10;
         step1 = 1 / step;
-        console.log(`Adjusting step (minus): ${step}`);
+        // console.log(`Adjusting step (minus): ${step}`);
         adjust = ((adjusts[adjusts.length - 1] * step1 ) - (step * step1)) / step1;
       } else {
         adjust = ((adjust * step1) - (step * step1)) / step1;
@@ -62,7 +62,7 @@ const findFallbackFont = async (font, weight, fallback) => {
         // sign changed, need to reduce step size
         step = step / 10;
         step1 = 1 / step;
-        console.log(`Adjusting step (plus): ${step}`);
+        // console.log(`Adjusting step (plus): ${step}`);
         adjust = ((adjusts[adjusts.length - 1] * step1 ) + (step * step1)) / step1;
       } else {
         adjust = ((adjust * step1) + (step * step1)) / step1;
@@ -76,18 +76,20 @@ const findFallbackFont = async (font, weight, fallback) => {
 
   } while (steps < MAX_STEPS && step > 0.001);
 
-  el.remove();
+  if (removeElement) {
+    el.remove();
+  }
 
   if (steps < MAX_STEPS) {
     return {
-      font,
+      font: family,
       fallback,
       adjust,
       steps,
       name: fallbackFont
     };
   }
-  throw new Error(`Could not find font adjust for "${font}": ${adjust} (${el[PROPERTY]} / ${initial})`);
+  throw new Error(`Could not find font adjust for "${family}": ${adjust} (${el[PROPERTY]} / ${initial})`);
 }
 
 const getFontFaceOutput = (family, weight, newname, adjust, fallback) => {
