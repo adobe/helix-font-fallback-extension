@@ -1,6 +1,6 @@
 import { getFontFaceOutput } from '../logic/fonts.js';
 
-const fonts = {};
+const fonts = [];
 
 const LOADER_PANEL = document.getElementById('loader');
 const NOFONTS_PANEL = document.getElementById('nofonts');
@@ -93,95 +93,89 @@ const compute = async (event) => {
 
   const tab = await getCurrentTab();
 
-  await asyncForEach(Object.keys(fonts), async (family) => {
-    const weigths = fonts[family];
+  await asyncForEach(fonts, async (family) => {
     const fallback = document.getElementById(`fallback-${family}`).value;
     const doProcess = document.getElementById(`process-${family}`).checked;
 
     if (!doProcess) return;
 
     log(`Computing fallback for ${family} with fallback ${fallback}`);
-    await asyncForEach(weigths, async (weight) => {
-      COMPUTING_PANEL.firstChild.textContent = `Computing fallback for ${family} (${weight})...`;
+      
+    await chrome.storage.local.set({ 
+      input: {
+        family,
+        fallback
+      }
+    });
 
-      await chrome.storage.local.set({ 
-        input: {
-          family,
-          weight,
-          fallback
+    const promise = new Promise((resolve, reject) => {
+      // check until the result is available
+      const interval = window.setInterval(async () => {
+        const { output, error } = await chrome.storage.local.get(['output', 'error']);
+        log('Checking storage for output', output);
+        if (output) {
+          window.clearInterval(interval);
+          await chrome.storage.local.remove('output');
+          resolve(output);
+        } else {
+          if (error) {
+            window.clearInterval(interval);
+            await chrome.storage.local.remove('error');
+            reject(error);
+          }
+        }
+      }, 1000);
+    });
+    
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['./js/scripts/computefallbackfont.js'],
+    });
+
+    try {
+      const { adjust, name } = await promise;
+    
+      RESULTS_CODE.innerHTML += getFontFaceOutput(family, name, adjust, fallback);
+      
+      const label = document.createElement('label');
+      label.innerHTML = `Replace <b>${family}</b> by <b>${name}</b>`;
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = 'simulate-' + family;
+      label.prepend(checkbox);
+
+      checkbox.addEventListener('change', async (event) => {
+        if (event.target.checked) {
+          await chrome.storage.local.set({ 
+            input: {
+              family,
+              apply: name,
+            }
+          });
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['./js/scripts/applyfont.js'],
+          });
+        } else {
+          await chrome.storage.local.set({ 
+            input: {
+              remove: name,
+            }
+          });
+
+          chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['./js/scripts/removefont.js'],
+          });
         }
       });
 
-      const promise = new Promise((resolve, reject) => {
-        // check until the result is available
-        const interval = window.setInterval(async () => {
-          const { output, error } = await chrome.storage.local.get(['output', 'error']);
-          log('Checking storage for output', output);
-          if (output) {
-            window.clearInterval(interval);
-            await chrome.storage.local.remove('output');
-            resolve(output);
-          } else {
-            if (error) {
-              window.clearInterval(interval);
-              await chrome.storage.local.remove('error');
-              reject(error);
-            }
-          }
-        }, 1000);
-      });
-      
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        files: ['./js/scripts/computefallbackfont.js'],
-      });
+      RESULTS_SIMULATION.append(label);
 
-      try {
-        const { adjust, name } = await promise;
-      
-        RESULTS_CODE.innerHTML += getFontFaceOutput(family, weight, name, adjust, fallback);
-        
-        const label = document.createElement('label');
-        label.innerHTML = `Replace <b>${family} (${weight})</b> by <b>${name}</b>`;
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = 'simulate-' + family + '-' + weight;
-        label.prepend(checkbox);
-
-        checkbox.addEventListener('change', async (event) => {
-          if (event.target.checked) {
-            await chrome.storage.local.set({ 
-              input: {
-                family,
-                weight,
-                apply: name,
-              }
-            });
-            chrome.scripting.executeScript({
-              target: { tabId: tab.id },
-              files: ['./js/scripts/applyfont.js'],
-            });
-          } else {
-            await chrome.storage.local.set({ 
-              input: {
-                remove: name,
-              }
-            });
-
-            chrome.scripting.executeScript({
-              target: { tabId: tab.id },
-              files: ['./js/scripts/removefont.js'],
-            });
-          }
-        });
-
-        RESULTS_SIMULATION.append(label);
-
-      } catch (error) {
-        RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${family} (${weight}): \n${error}\n\n`;
-      }
-    });
+    } catch (error) {
+      RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${family}: \n${error}\n\n`;
+    }
   });
   RESULTS_CODE.innerHTML += '\n';
 
@@ -212,31 +206,25 @@ const load = async () => {
     files: ['./js/scripts/getfonts.js'],
   });
 
-  let hasFonts = false;
   if (results && results.length > 0) {
     results[0].result.forEach((font) => {
-      const { family, weight } = font;
-      if (!fonts[family]) {
-        fonts[family] = [];
-      }
-      fonts[family].push(weight);
-      hasFonts = true;
+      const { family } = font;
+      fonts.push(family);
     });
   }
 
   log('fonts', fonts);
 
   LOADER_PANEL.classList.add('hidden');
-  if (hasFonts) {
+  if (fonts.length > 0) {
     COMPUTE_BUTTON.addEventListener('click', compute);
     COPY_BUTTON.addEventListener('click', copy);
     BACK_BUTTON.addEventListener('click', back);
-    for (const family in fonts) {
-      const weigths = fonts[family].join(', ');
+    fonts.forEach((family) => {
       const id = family;
       const label = document.createElement('label');
       label.for = id;
-      label.innerText = `${family} (${weigths})`;
+      label.innerText = `${family}`;
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
@@ -247,7 +235,7 @@ const load = async () => {
       const select = getDefaultFallbackFontSelect(id);
       label.appendChild(select);
       FONTS_GRID.append(label);
-    }
+    });
     FONTS_PANEL.classList.remove('hidden');
   } else {
     log('No fonts found');

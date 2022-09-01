@@ -49,3 +49,7 @@ It might be obvious (was not to me) but the text to run the font fallback comput
 
 If the paragraph (or heading or list items...) is an fixed width container, the text might go the next line and push down the next elements. Similar to the previous point, it highly depends on the text and the character instances used to compute the size adjustement. Except if you have a huge parapraph, the probably is also lower and we can consider to ignore the height during the computation. If this is an issue, you should probably tweak the font fallback on the exact text used (most likely decrease the size adjust to reduce the number of extra lines created).
 If the container width is small but there is a lot of text and spacing, this can be tricky.
+
+# Weight or not weight
+
+The font weight definitively has an impact on the "space" that the font occupies. But... the weight might be managed with a different font face and finding a fallback for all weights of a font can be tricky. For example, Arial offers 400 and 700 but you might want to use Arial Black font for a weight of 900. Having a generic rule or a tool that allows all the possible config here is not simple. We'll focus here only on the family, not the weight.

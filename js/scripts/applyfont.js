@@ -3,10 +3,10 @@
   const { getElementsUsingFont } = await import(src);
 
   const { input } = await chrome.storage.local.get('input');
-  const { family, weight, apply } = input;
+  const { family, apply } = input;
   await chrome.storage.local.remove('input')
 
-  getElementsUsingFont(family, weight).forEach((el) => {
+  getElementsUsingFont(family).forEach((el) => {
     el.style['font-family'] = `"${apply}"`;
   });
 })();

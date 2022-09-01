@@ -3,7 +3,7 @@ const MAX_STEPS = 1000;
 const ADJUST_START = 100;
 const STEP_START = 0.1;
 
-const findFallbackFont = async ({ family, weight = 400, fallback, element: el, removeElement = true, property = 'offsetWidth'}) => {
+const findFallbackFont = async ({ family, fallback, element: el, removeElement = true, property = 'offsetWidth'}) => {
   console.log(`Attempt to find fallback for font ${family}`);
 
   if (!el) {
@@ -15,13 +15,12 @@ const findFallbackFont = async ({ family, weight = 400, fallback, element: el, r
   }
 
   el.style['font-family'] = `"${family}"`;
-  el.style['font-weight'] = weight;
 
   const initial = el[property];
   
   console.log(`Initial value for property ${property}: ${initial}`);
 
-  const fallbackFont = `${family}-${weight}-fallback`;
+  const fallbackFont = `${family}-fallback`;
   el.style['font-family'] = `"${fallbackFont}"`;
   
   let steps = 0;
@@ -36,7 +35,7 @@ const findFallbackFont = async ({ family, weight = 400, fallback, element: el, r
 
   do {
     // console.log(`Trying with adjust: ${adjust}`);
-    const fontface = new FontFace(fallbackFont, `local("${fallback}")`, { sizeAdjust: `${adjust}%`, weight });
+    const fontface = new FontFace(fallbackFont, `local("${fallback}")`, { sizeAdjust: `${adjust}%` });
     await fontface.load();
     document.fonts.add(fontface);
 
@@ -92,9 +91,9 @@ const findFallbackFont = async ({ family, weight = 400, fallback, element: el, r
   throw new Error(`Could not find font adjust for "${family}": ${adjust} (${el[PROPERTY]} / ${initial})`);
 }
 
-const getFontFaceOutput = (family, weight, newname, adjust, fallback) => {
+const getFontFaceOutput = (family, newname, adjust, fallback) => {
   return `
-  /* fallback font for ${family} (${weight}) */
+  /* fallback font for ${family} */
   @font-face {
     font-family: "${newname}";
     size-adjust: ${adjust}%;
@@ -102,19 +101,16 @@ const getFontFaceOutput = (family, weight, newname, adjust, fallback) => {
   }\n`;
 }
 
-const getElementsUsingFont = (family, weight = null) => {
-  console.log(`Searching for elements using font ${family} (${weight})`);
+const getElementsUsingFont = (family) => {
+  console.log(`Searching for elements using font ${family}`);
   const elements = [];
 
   const familyLC = family.toLowerCase().trim()
   document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, a, li, span').forEach(function(el) {
     const currentFamily = window.getComputedStyle(el).getPropertyValue('font-family').toLowerCase().trim();
-    const currentWeight = window.getComputedStyle(el).getPropertyValue('font-weight');
 
     if (currentFamily.includes(familyLC)) {
-      if (weight === null || weight === currentWeight) {
-        elements.push(el);
-      }
+      elements.push(el);
     }
   });
 
