@@ -20,6 +20,8 @@ window.setInterval(() => {
   if (!c) {
     c = document.createElement('div');
     c.className = 'cls';
+    c.style['font-family'] = 'Verdana';
+    c.style['font-weight'] = 'bold';
     c.style.position = 'absolute';
     c.style.top = '50';
     c.style.left = '50';
@@ -38,4 +40,12 @@ window.setInterval(() => {
   }
 
   c.innerHTML = `Current CLS value: ${displayCLS}`;
+
+  const lh = new URL('https://pagespeed.web.dev/report');
+  const current = new URL(window.location.href);
+  current.searchParams.append('markers', 'no');
+  
+  lh.searchParams.append('url', current.href);
+
+  c.innerHTML += `<br><a target="_new" href="${lh.href}">Compare with "real" CLS</a>`;
 }, 2000);

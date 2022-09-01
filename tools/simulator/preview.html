@@ -11,7 +11,7 @@
       const adjust = u.searchParams.get('adjust') || 100; // font face size adjustment (optional but recommended / default: 100)
       const width = u.searchParams.get('width') || '100%'; // body width (optional / default: 100%)
       const lineHeight = u.searchParams.get('lineHeight') || '1.5em'; // text line height (optional / default: 1.5em)
-      window.markers = u.searchParams.get('markers'); // show CLS markers (optional / default: no)
+      window.markers = u.searchParams.get('markers'); // show CLS markers (optional / default: true)
 
       const createFontface = async ({ family, src, adjust }) => {
         try {
