@@ -42,9 +42,9 @@ const log = async function (a, b, c, d) {
   });
 }
 
-const getDefaultFallbackFontSelect = (id) => {
+const getLocalFontSelect = (id) => {
   const select = document.createElement('select');
-  select.id = `fallback-${id}`;
+  select.id = `local-${id}`;
   select.required = true;
 
   [{ 
@@ -94,17 +94,17 @@ const compute = async (event) => {
   const tab = await getCurrentTab();
 
   await asyncForEach(fonts, async (family) => {
-    const fallback = document.getElementById(`fallback-${family}`).value;
+    const local = document.getElementById(`local-${family}`).value;
     const doProcess = document.getElementById(`process-${family}`).checked;
 
     if (!doProcess) return;
 
-    log(`Computing fallback for ${family} with fallback ${fallback}`);
+    log(`Computing fallback for ${family} with local ${local}`);
       
     await chrome.storage.local.set({ 
       input: {
         family,
-        fallback
+        local
       }
     });
 
@@ -133,9 +133,9 @@ const compute = async (event) => {
     });
 
     try {
-      const { adjust, name } = await promise;
+      const { adjust, name, local } = await promise;
     
-      RESULTS_CODE.innerHTML += getFontFaceOutput(family, name, adjust, fallback);
+      RESULTS_CODE.innerHTML += getFontFaceOutput(family, { adjust, name, local });
       
       const label = document.createElement('label');
       label.innerHTML = `Replace <b>${family}</b> by <b>${name}</b>`;
@@ -232,7 +232,7 @@ const load = async () => {
       checkbox.checked = true;
       label.prepend(checkbox);
 
-      const select = getDefaultFallbackFontSelect(id);
+      const select = getLocalFontSelect(id);
       label.appendChild(select);
       FONTS_GRID.append(label);
     });

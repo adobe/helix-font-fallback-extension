@@ -1,4 +1,4 @@
-import { findFallbackFont } from 'js/logic/fonts.js';
+import { findFallbackFont } from './js/logic/fonts.js';
 
 (() => {
   const asyncForEach = async (array, callback) => {
@@ -10,15 +10,21 @@ import { findFallbackFont } from 'js/logic/fonts.js';
 
   const findForAll = async () => {
 
-    const fonts = {};
-    document.fonts.forEach((f) => { fonts[f.family] = f;});
+    const fonts = [];
+    document.fonts.forEach((f) => { 
+      if (!fonts.includes(f.family)) {
+        fonts.push(f.family);
+      }
+    });
 
     const fallbacks = [];
-    await asyncForEach(Object.keys(fonts), async (font) => {
-      if (!font.family.includes('fallback')) {
+    await asyncForEach(fonts, async (font) => {
+      if (!font.includes('fallback')) {
         try {
-          const fallback = window.prompt(`What is the default font to use as basis for ${font}?`, 'Arial')
-          fallbacks.push(await findFallbackFont({ family: font, fallback }));
+          const local = window.prompt(`What is the default / local font to use as basis for ${font}?`, 'Arial');
+          if (local) {
+            fallbacks.push(await findFallbackFont({ family: font, local }));
+          }
         } catch (e) {
           console.log(e);
         }
@@ -34,10 +40,10 @@ import { findFallbackFont } from 'js/logic/fonts.js';
     console.log('Here are your fallbacks:');
     fallbacks.forEach((f) => {
       console.log(`@font-face {
-    font-family: "${f.font}-fallback";
+    font-family: "${f.name}";
     size-adjust: ${f.adjust}%;
-    src: local("${f.fallback}");
-    }`);
+    src: local("${f.local}");
+}`);
     });
   };
 

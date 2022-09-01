@@ -5,9 +5,9 @@
     const { findFallbackFont } = await import(src);
 
     const { input } = await chrome.storage.local.get('input');
-    const { family, fallback } = input;
+    const { family, local } = input;
     await chrome.storage.local.remove('input');
-    const font = await findFallbackFont({ family, fallback });
+    const font = await findFallbackFont({ family, local });
     console.log('Computed fallback font: ', font);
     await chrome.storage.local.set({ output: font });
   } catch (e) {

@@ -21,7 +21,8 @@ Add the following bookmarklet to your browser:
 ```js
 javascript: (() => {
   const s = document.createElement('script');
-  s.src='https://main--font-fallback--kptdobe.hlx.live/run.js';
+  s.type = 'module';
+  s.src = 'https://main--font-fallback--kptdobe.hlx.live/bookmarklet.js';
   document.head.append(s);
 })();
 ```

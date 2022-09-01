@@ -35,7 +35,7 @@
             window.setTimeout(async () => {
               const fallback = await findFallbackFont({
                 family,
-                fallback: local,
+                local,
                 element: p,
                 removeElement: false,
                 property: 'offsetWidth',
@@ -45,7 +45,7 @@
               c.className = 'result';
               
               const pre = document.createElement('pre');
-              pre.innerText = getFontFaceOutput(fallback.font, fallback.name, fallback.adjust, fallback.fallback);
+              pre.innerText = getFontFaceOutput(family, fallback);
               c.append(pre);
               document.body.appendChild(c);
             }, 500);
