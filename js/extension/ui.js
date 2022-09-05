@@ -1,6 +1,6 @@
 import { getFontFaceOutput } from '../logic/fonts.js';
 
-const fonts = [];
+let fonts = [];
 
 const LOADER_PANEL = document.getElementById('loader');
 const NOFONTS_PANEL = document.getElementById('nofonts');
@@ -28,6 +28,13 @@ const getCurrentTab = async () => {
   const tabId = parseInt(u.searchParams.get('tabId'));
   const tab = await chrome.tabs.get(tabId);
   return tab;
+}
+
+const sendMessage = async (message) => {
+  const tab = await getCurrentTab();
+  return new Promise((resolve) => {
+    chrome.tabs.sendMessage(tab.id, message, resolve);
+  });
 }
 
 const log = async function (a, b, c, d) {
@@ -101,39 +108,16 @@ const compute = async (event) => {
 
     log(`Computing fallback for ${family} with local ${local}`);
       
-    await chrome.storage.local.set({ 
-      input: {
-        family,
-        local
-      }
-    });
-
-    const promise = new Promise((resolve, reject) => {
-      // check until the result is available
-      const interval = window.setInterval(async () => {
-        const { output, error } = await chrome.storage.local.get(['output', 'error']);
-        log('Checking storage for output', output);
-        if (output) {
-          window.clearInterval(interval);
-          await chrome.storage.local.remove('output');
-          resolve(output);
-        } else {
-          if (error) {
-            window.clearInterval(interval);
-            await chrome.storage.local.remove('error');
-            reject(error);
-          }
-        }
-      }, 1000);
-    });
-    
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['./js/scripts/computefallbackfont.js'],
-    });
-
     try {
-      const { adjust, name, local } = await promise;
+      const result = await sendMessage({ fct: 'computeFallbackFont', params: { family, local } });
+
+      console.log('computeFallbackFont result', result);
+
+      const { adjust, name, error } = result;
+
+      if (error) {
+        throw new Error(error);
+      }
     
       RESULTS_CODE.innerHTML += getFontFaceOutput(family, { adjust, name, local });
       
@@ -147,27 +131,9 @@ const compute = async (event) => {
 
       checkbox.addEventListener('change', async (event) => {
         if (event.target.checked) {
-          await chrome.storage.local.set({ 
-            input: {
-              family,
-              apply: name,
-            }
-          });
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            files: ['./js/scripts/applyfont.js'],
-          });
+          await sendMessage({ fct: 'replaceFont', params: { current: family, replace: name } });
         } else {
-          await chrome.storage.local.set({ 
-            input: {
-              remove: name,
-            }
-          });
-
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            files: ['./js/scripts/removefont.js'],
-          });
+          await sendMessage({ fct: 'removeFont', params: { remove: name } });
         }
       });
 
@@ -201,18 +167,13 @@ const back = () => {
 const load = async () => {
   const tab = await getCurrentTab();
 
-  const results = await chrome.scripting.executeScript({
+  await chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    files: ['./js/scripts/getfonts.js'],
+    files: ['./content.js'],
   });
 
-  if (results && results.length > 0) {
-    results[0].result.forEach((font) => {
-      const { family } = font;
-      fonts.push(family);
-    });
-  }
-
+  fonts = (await sendMessage({ fct: 'getFonts' })) || [];
+  
   log('fonts', fonts);
 
   LOADER_PANEL.classList.add('hidden');

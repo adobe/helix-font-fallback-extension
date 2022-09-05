@@ -5,4 +5,4 @@ chrome.action.onClicked.addListener(async (tab) => {
     width: 600,
     height: 800,
   });
-})
+});
