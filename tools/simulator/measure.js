@@ -13,7 +13,7 @@ window.cls = 0;
 new PerformanceObserver((entryList) => {
   for (const entry of entryList.getEntries()) {
     // 500 ms input exclusion window
-    if (entry.hadRecentInput) cls = 0;
+    if (entry.hadRecentInput) window.cls = 0;
     window.cls += entry.value;
     entry.sources.forEach((source) => {
       if (window.markers !== 'no' && source.node?.style) {
@@ -23,7 +23,7 @@ new PerformanceObserver((entryList) => {
     // console.log('CONSOLE - Current CLS value:', cls, entry);
   }
 // the buffered flag enables observer to access entries from before the observer creation
-}).observe({type: 'layout-shift', buffered: false});
+}).observe({ type: 'layout-shift', buffered: false });
 
 window.setInterval(() => {
   let c = document.querySelector('.cls');
@@ -37,7 +37,7 @@ window.setInterval(() => {
     c.style.top = '50';
     c.style.left = '50';
     c.style['z-index'] = '9999';
-    c.style['padding'] = '30px';
+    c.style.padding = '30px';
     document.body.appendChild(c);
   }
 
@@ -56,7 +56,7 @@ window.setInterval(() => {
     const lh = new URL('https://pagespeed.web.dev/report');
     const current = new URL(window.location.href);
     current.searchParams.append('markers', 'no');
-    
+
     lh.searchParams.append('url', current.href);
 
     c.innerHTML += `<br><a target="_new" href="${lh.href}">Compare with "real" CLS</a>`;

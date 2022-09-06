@@ -1,0 +1,12 @@
+.DS_Store
+.extension.pem
+.hlx
+.nyc_output/
+coverage
+coverage-wtr
+dist
+node_modules/
+junit
+logs
+test-results.xml
+tmp

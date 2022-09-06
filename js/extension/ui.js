@@ -45,10 +45,10 @@ const asyncForEach = async (array, callback) => {
  */
 const getCurrentTab = async () => {
   const u = new URL(window.location.href);
-  const tabId = parseInt(u.searchParams.get('tabId'));
+  const tabId = parseInt(u.searchParams.get('tabId'), 10);
   const tab = await chrome.tabs.get(tabId);
   return tab;
-}
+};
 
 /**
  * Sends a message to the content window
@@ -60,7 +60,7 @@ const sendMessage = async (message) => {
   return new Promise((resolve) => {
     chrome.tabs.sendMessage(tab.id, message, resolve);
   });
-}
+};
 
 /**
  * Forwards the extension console logs in the content window console.
@@ -69,17 +69,17 @@ const sendMessage = async (message) => {
  * @param {*} c console.log parameter three
  * @param {*} d console.log parameter four
  */
-const log = async function (a, b, c, d) {
+const log = async (a, b, c, d) => {
   const tab = await getCurrentTab();
 
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    func: function (a, b, c, d) {
-      console.log('[from extension]', a, b, c, d);
+    func(pa, pb, pc, pd) {
+      console.log('[from extension]', pa, pb, pc, pd);
     },
     args: [a || '', b || '', c || '', d || ''],
   });
-}
+};
 
 /**
  * Returns a select element with a selection of local fonts
@@ -91,7 +91,7 @@ const getLocalFontSelect = (id) => {
   select.id = `local-${id}`;
   select.required = true;
 
-  [{ 
+  [{
     name: 'Arial',
     cat: 'sans-serif',
   }, {
@@ -108,22 +108,22 @@ const getLocalFontSelect = (id) => {
     cat: 'sans-serif',
   }, {
     name: 'Times New Roman',
-    cat: 'serif', 
+    cat: 'serif',
   }, {
     name: 'Georgia',
-    cat: 'serif', 
+    cat: 'serif',
   }, {
     name: 'Courier New',
-    cat: 'monospace', 
+    cat: 'monospace',
   }].forEach((font) => {
     const option = document.createElement('option');
     option.value = font.name;
     option.innerHTML = `${font.name} (${font.cat})`;
     select.appendChild(option);
   });
-  
+
   return select;
-}
+};
 
 /**
  * Runs the compute action
@@ -138,8 +138,6 @@ const compute = async (event) => {
   RESULTS_SIMULATION.innerHTML = '';
   RESULTS_PANEL.classList.remove('hidden');
 
-  const tab = await getCurrentTab();
-
   await asyncForEach(fonts, async (family) => {
     const local = document.getElementById(`local-${family}`).value;
     const doProcess = document.getElementById(`process-${family}`).checked;
@@ -147,7 +145,7 @@ const compute = async (event) => {
     if (!doProcess) return;
 
     log(`Computing fallback for ${family} with local ${local}`);
-      
+
     try {
       const result = await sendMessage({ fct: 'computeFallbackFont', params: { family, local } });
 
@@ -158,18 +156,18 @@ const compute = async (event) => {
       if (error) {
         throw new Error(error);
       }
-    
+
       RESULTS_CODE.innerHTML += getFontFaceOutput(family, { adjust, name, local });
-      
+
       const label = document.createElement('label');
       label.innerHTML = `Replace <b>${family}</b> by <b>${name}</b>`;
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
-      checkbox.id = 'simulate-' + family;
+      checkbox.id = `simulate-${family}`;
       label.prepend(checkbox);
 
-      checkbox.addEventListener('change', async (event) => {
+      checkbox.addEventListener('change', async () => {
         if (event.target.checked) {
           await sendMessage({ fct: 'replaceFont', params: { current: family, replace: name } });
         } else {
@@ -178,7 +176,6 @@ const compute = async (event) => {
       });
 
       RESULTS_SIMULATION.append(label);
-
     } catch (error) {
       RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${family}: \n${error}\n\n`;
     }
@@ -187,7 +184,7 @@ const compute = async (event) => {
 
   COPY_BUTTON.classList.remove('hidden');
   COMPUTING_PANEL.classList.add('hidden');
-}
+};
 
 /**
  * Runs the copy (to clipboard...) action
@@ -199,7 +196,7 @@ const copy = async () => {
   textarea.select();
   document.execCommand('copy');
   textarea.remove();
-}
+};
 
 /**
  * Runs the back action
@@ -208,10 +205,10 @@ const back = () => {
   RESULTS_PANEL.classList.add('hidden');
   FONTS_PANEL.classList.remove('hidden');
   COPY_BUTTON.classList.add('hidden');
-}
+};
 
 /**
- * Initial setup 
+ * Initial setup
  */
 const load = async () => {
   const tab = await getCurrentTab();
@@ -222,7 +219,7 @@ const load = async () => {
   });
 
   fonts = (await sendMessage({ fct: 'getFonts' })) || [];
-  
+
   log('fonts', fonts);
 
   LOADER_PANEL.classList.add('hidden');
@@ -238,7 +235,7 @@ const load = async () => {
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
-      checkbox.id = 'process-' + family;
+      checkbox.id = `process-${family}`;
       checkbox.checked = true;
       label.prepend(checkbox);
 

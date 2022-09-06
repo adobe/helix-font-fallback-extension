@@ -9,12 +9,35 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-// simply creates the popup and pass the tab that has created it as a parameter
-chrome.action.onClicked.addListener(async (tab) => {
-  chrome.windows.create({
-    url: chrome.runtime.getURL(`/index.html?tabId=${tab.id}`),
-    type: 'popup',
-    width: 600,
-    height: 800,
-  });
-});
+
+module.exports = {
+  root: true,
+  extends: '@adobe/helix',
+  env: {
+    browser: true,
+  },
+  parser: '@babel/eslint-parser',
+  parserOptions: {
+    allowImportExportEverywhere: true,
+    sourceType: 'module',
+    requireConfigFile: false,
+  },
+  globals: {
+    // required for extension
+    chrome: true,
+    jsyaml: true,
+  },
+  ignorePatterns: [
+    '.vscode/*',
+    'coverage/*',
+    'debug/*',
+    'dist/*',
+  ],
+  rules: {
+    // allow reassigning param
+    'no-param-reassign': 0,
+    'import/extensions': ['error', {
+      js: 'always',
+    }],
+  },
+};

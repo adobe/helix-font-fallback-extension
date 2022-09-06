@@ -19,17 +19,23 @@ const STEP_START = 0.1;
  * @param {Object} config - The computation configuration
  * @param {string} config.family - The font family to compute the fallback for
  * @param {string} config.local - The local font to use as fallback
- * @param {Element} [config.elememt] - The DOM element used to compute the fallback - if not provided, the function will create one
+ * @param {Element} [config.elememt] - The DOM element used to compute the fallback
+ * - if not provided, the function will create one
  * @param {boolean} [config.removeElement] - Remove the element after computation (default: true)
- * @param {boolean} [config.deleteFont] - Remove the fallback fontface inserted into the document (default: false)
- * @param {string} [config.property] - The CSS property to use for the computation (default: 'offsetWidth')
- * @returns {Object} - The computed fallback font configuration. The object contains the following properties:
+ * @param {boolean} [config.deleteFont] - Remove the fallback fontface inserted
+ * into the document (default: false)
+ * @param {string} [config.property] - The CSS property to use
+ * for the computation (default: 'offsetWidth')
+ * @returns {Object} - The computed fallback font configuration.
+ * The object contains the following properties:
  * - name: the name of the fallback font
  * - adjust: the size-adjust value
  * - local: the local font used as fallback
  * - steps: the number of steps needed to compute the fallback
  */
-const computeFallbackFont = async ({ family, local, element: el, removeElement = true, property = 'offsetWidth', deleteFont = false}) => {
+const computeFallbackFont = async ({
+  family, local, element: el, removeElement = true, property = 'offsetWidth', deleteFont = false,
+}) => {
   console.log(`Attempt to find fallback for font ${family}`);
 
   if (!el) {
@@ -37,18 +43,18 @@ const computeFallbackFont = async ({ family, local, element: el, removeElement =
     document.body.append(el);
     el.innerHTML = TEXT;
     el.style['white-space'] = 'pre';
-    el.style['display'] = 'inline-block';
+    el.style.display = 'inline-block';
   }
 
   el.style['font-family'] = `"${family}"`;
 
   const initial = el[property];
-  
+
   console.log(`Initial value for property ${property}: ${initial}`);
 
   const fallbackFont = `${family}-fallback`;
   el.style['font-family'] = `"${fallbackFont}"`;
-  
+
   let steps = 0;
   let adjust = ADJUST_START;
   let step = STEP_START;
@@ -62,43 +68,41 @@ const computeFallbackFont = async ({ family, local, element: el, removeElement =
   do {
     // console.log(`Trying with adjust: ${adjust}`);
     const fontface = new FontFace(fallbackFont, `local("${local}")`, { sizeAdjust: `${adjust}%` });
+    // eslint-disable-next-line no-await-in-loop
     await fontface.load();
     document.fonts.add(fontface);
 
     // console.log(`Values (current / initial): ${el[property]} / ${initial}`);
     diff = el[property] - initial;
 
-    if (deleteFont) document.fonts.delete(font);
+    if (deleteFont) document.fonts.delete(fontface);
 
     if (diff === 0) break;
-    
+
     if (diff > 0) {
       if (diffs.length > 1 && diffs[diffs.length - 1] < diff) {
         // sign changed, need to reduce step size
-        step = step / 10;
+        step /= 10;
         step1 = 1 / step;
         // console.log(`Adjusting step (minus): ${step}`);
-        adjust = ((adjusts[adjusts.length - 1] * step1 ) - (step * step1)) / step1;
+        adjust = ((adjusts[adjusts.length - 1] * step1) - (step * step1)) / step1;
       } else {
         adjust = ((adjust * step1) - (step * step1)) / step1;
       }
+    } else if (diffs.length > 1 && diffs[diffs.length - 1] > diff) {
+      // sign changed, need to reduce step size
+      step /= 10;
+      step1 = 1 / step;
+      // console.log(`Adjusting step (plus): ${step}`);
+      adjust = ((adjusts[adjusts.length - 1] * step1) + (step * step1)) / step1;
     } else {
-      if (diffs.length > 1 && diffs[diffs.length - 1] > diff) {
-        // sign changed, need to reduce step size
-        step = step / 10;
-        step1 = 1 / step;
-        // console.log(`Adjusting step (plus): ${step}`);
-        adjust = ((adjusts[adjusts.length - 1] * step1 ) + (step * step1)) / step1;
-      } else {
-        adjust = ((adjust * step1) + (step * step1)) / step1;
-      }
+      adjust = ((adjust * step1) + (step * step1)) / step1;
     }
-    
+
     diffs.push(diff);
     adjusts.push(adjust);
 
-    steps++;
-
+    steps += 1;
   } while (steps < MAX_STEPS && step > 0.001);
 
   if (removeElement) {
@@ -110,11 +114,11 @@ const computeFallbackFont = async ({ family, local, element: el, removeElement =
       local,
       adjust,
       steps,
-      name: fallbackFont
+      name: fallbackFont,
     };
   }
-  throw new Error(`Could not find font adjust for "${family}": ${adjust} (${el[PROPERTY]} / ${initial})`);
-}
+  throw new Error(`Could not find font adjust for "${family}": ${adjust} (${el[property]} / ${initial})`);
+};
 
 /**
  * Returns a string representing the CSS definition of a fallback fontface.
@@ -125,15 +129,13 @@ const computeFallbackFont = async ({ family, local, element: el, removeElement =
  * @param {string} fallback.name - The name of the fallback font
  * @returns {string} - The CSS definition of the fallback fontface
  */
-const getFontFaceOutput = (family, { name, adjust, local }) => {
-  return `
+const getFontFaceOutput = (family, { name, adjust, local }) => `
   /* fallback font for ${family} */
   @font-face {
     font-family: "${name}";
     size-adjust: ${adjust}%;
     src: local("${local}");
   }\n`;
-}
 
 /**
  * Returns the elements of the document using the provided font family.
@@ -144,8 +146,8 @@ const getElementsUsingFont = (family) => {
   console.log(`Searching for elements using font ${family}`);
   const elements = [];
 
-  const familyLC = family.toLowerCase().trim()
-  document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, a, li, span').forEach(function(el) {
+  const familyLC = family.toLowerCase().trim();
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, a, li, span').forEach((el) => {
     const currentFamily = window.getComputedStyle(el).getPropertyValue('font-family').toLowerCase().trim();
 
     if (currentFamily.includes(familyLC)) {
@@ -155,6 +157,6 @@ const getElementsUsingFont = (family) => {
 
   console.log(`Found ${elements.length} elements.`, elements);
   return elements;
-}
+};
 
 export { computeFallbackFont, getFontFaceOutput, getElementsUsingFont };

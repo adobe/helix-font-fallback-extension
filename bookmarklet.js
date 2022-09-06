@@ -20,9 +20,8 @@ import { computeFallbackFont } from './js/logic/fonts.js';
   };
 
   const findForAll = async () => {
-
     const fonts = [];
-    document.fonts.forEach((f) => { 
+    document.fonts.forEach((f) => {
       if (!fonts.includes(f.family)) {
         fonts.push(f.family);
       }
@@ -43,7 +42,7 @@ import { computeFallbackFont } from './js/logic/fonts.js';
     });
 
     return fallbacks;
-  }
+  };
 
   const main = async () => {
     const fallbacks = await findForAll();
