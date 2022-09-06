@@ -1,4 +1,10 @@
 {
+  /** 
+   * Sets the font-family on all elements in the document using (getComputedStyle) the provided font family.
+   * @param {Object} params - Parameter object
+   * @param {string} params.current - The font family to search for
+   * @param {string} params.replace - The font family to replace with
+   */
   const replaceFont = async ({ current, replace }) => {
     const src = chrome.runtime.getURL('/js/logic/fonts.js');
     const { getElementsUsingFont } = await import(src);
@@ -8,6 +14,11 @@
     });
   };
 
+  /** 
+   * Removes the font-family property from all elements of the document using the provided font family.
+   * @param {Object} params - Parameter object
+   * @param {string} params.remove - The font family to remove
+   */
   const removeFont = async ({ remove }) => {
     const src = chrome.runtime.getURL('/js/logic/fonts.js');
     const { getElementsUsingFont } = await import(src);
@@ -17,6 +28,10 @@
     });
   };
 
+  /** 
+   * Returns all the fonts used on in the current document.
+   * @returns {Array[string]} - The list of font family
+   */
   const getFonts = () => {
       const fonts = [];
 
@@ -29,6 +44,17 @@
       return fonts.sort((a, b) => a.localeCompare(b));
   };
 
+  /**
+   * Computes a fallback font for the provided font family based on a local font.
+   * @param {Object} params - Parameter object
+   * @param {string} params.family - The font family
+   * @param {string} params.local - The local font to use as fallback
+   * @returns {Object} - The computed fallback font configuration. The object contains the following properties:
+   * - name: the name of the fallback font
+   * - adjust: the size-adjust value
+   * - local: the local font used as fallback
+   * - steps: the number of steps needed to compute the fallback
+   */
   const computeFallbackFont = async ({ family, local }) => {
     try {
       const src = chrome.runtime.getURL('/js/logic/fonts.js');

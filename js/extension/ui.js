@@ -16,6 +16,11 @@ const FONTS_GRID = document.querySelector('#fonts .grid');
 const RESULTS_CODE = document.querySelector('#results pre');
 const RESULTS_SIMULATION = document.querySelector('#results form');
 
+/**
+ * Async array forEach
+ * @param {Array} array The array to iterate over
+ * @param {*} callback The method to call for each item
+ */
 const asyncForEach = async (array, callback) => {
   for (let index = 0; index < array.length; index += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -23,6 +28,10 @@ const asyncForEach = async (array, callback) => {
   }
 };
 
+/**
+ * Returns the current tab
+ * @returns {chrome.tabs.Tab} The current tab
+ */
 const getCurrentTab = async () => {
   const u = new URL(window.location.href);
   const tabId = parseInt(u.searchParams.get('tabId'));
@@ -30,6 +39,11 @@ const getCurrentTab = async () => {
   return tab;
 }
 
+/**
+ * Sends a message to the content window
+ * @param {Object} message The message to send
+ * @returns {Promise<Object} The response result
+ */
 const sendMessage = async (message) => {
   const tab = await getCurrentTab();
   return new Promise((resolve) => {
@@ -37,6 +51,13 @@ const sendMessage = async (message) => {
   });
 }
 
+/**
+ * Forwards the extension console logs in the content window console.
+ * @param {*} a console.log parameter one
+ * @param {*} b console.log parameter two
+ * @param {*} c console.log parameter three
+ * @param {*} d console.log parameter four
+ */
 const log = async function (a, b, c, d) {
   const tab = await getCurrentTab();
 
@@ -49,6 +70,11 @@ const log = async function (a, b, c, d) {
   });
 }
 
+/**
+ * Returns a select element with a selection of local fonts
+ * @param {*} id The id of the select element
+ * @returns {Element} The select element
+ */
 const getLocalFontSelect = (id) => {
   const select = document.createElement('select');
   select.id = `local-${id}`;
@@ -88,6 +114,9 @@ const getLocalFontSelect = (id) => {
   return select;
 }
 
+/**
+ * Runs the compute action
+ */
 const compute = async (event) => {
   event.preventDefault();
   event.stopPropagation();
@@ -147,8 +176,11 @@ const compute = async (event) => {
 
   COPY_BUTTON.classList.remove('hidden');
   COMPUTING_PANEL.classList.add('hidden');
-  
 }
+
+/**
+ * Runs the copy (to clipboard...) action
+ */
 const copy = async () => {
   const textarea = document.createElement('textarea');
   textarea.value = RESULTS_CODE.innerHTML;
@@ -158,12 +190,18 @@ const copy = async () => {
   textarea.remove();
 }
 
+/**
+ * Runs the back action
+ */
 const back = () => {
   RESULTS_PANEL.classList.add('hidden');
   FONTS_PANEL.classList.remove('hidden');
   COPY_BUTTON.classList.add('hidden');
 }
 
+/**
+ * Initial setup 
+ */
 const load = async () => {
   const tab = await getCurrentTab();
 
