@@ -32,9 +32,9 @@
   const computeFallbackFont = async ({ family, local }) => {
     try {
       const src = chrome.runtime.getURL('/js/logic/fonts.js');
-      const { findFallbackFont } = await import(src);
+      const { computeFallbackFont } = await import(src);
   
-      const font = await findFallbackFont({ family, local });
+      const font = await computeFallbackFont({ family, local });
       console.log('Computed fallback font: ', font);
       return font;
     } catch (e) {

@@ -1,4 +1,4 @@
-import { findFallbackFont } from './js/logic/fonts.js';
+import { computeFallbackFont } from './js/logic/fonts.js';
 
 (() => {
   const asyncForEach = async (array, callback) => {
@@ -23,7 +23,7 @@ import { findFallbackFont } from './js/logic/fonts.js';
         try {
           const local = window.prompt(`What is the default / local font to use as basis for ${font}?`, 'Arial');
           if (local) {
-            fallbacks.push(await findFallbackFont({ family: font, local }));
+            fallbacks.push(await computeFallbackFont({ family: font, local }));
           }
         } catch (e) {
           console.log(e);

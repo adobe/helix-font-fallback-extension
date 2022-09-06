@@ -3,7 +3,22 @@ const MAX_STEPS = 1000;
 const ADJUST_START = 100;
 const STEP_START = 0.1;
 
-const findFallbackFont = async ({ family, local, element: el, removeElement = true, property = 'offsetWidth'}) => {
+/**
+ * Computes a fallback font for the given font family and the local font to use as basis.
+ * @param {Object} config - The computation configuration
+ * @param {string} config.family - The font family to compute the fallback for
+ * @param {string} config.local - The local font to use as fallback
+ * @param {Element} [config.elememt] - The DOM element used to compute the fallback - if not provided, the function will create one
+ * @param {boolean} [config.removeElement] - Remove the element after computation (default: true)
+ * @param {boolean} [config.deleteFont] - Remove the fallback fontface inserted into the document (default: false)
+ * @param {string} [config.property] - The CSS property to use for the computation (default: 'offsetWidth')
+ * @returns {Object} - The computed fallback font configuration. The object contains the following properties:
+ * - name: the name of the fallback font
+ * - adjust: the size-adjust value
+ * - local: the local font used as fallback
+ * - steps: the number of steps needed to compute the fallback
+ */
+const computeFallbackFont = async ({ family, local, element: el, removeElement = true, property = 'offsetWidth', deleteFont = false}) => {
   console.log(`Attempt to find fallback for font ${family}`);
 
   if (!el) {
@@ -42,7 +57,7 @@ const findFallbackFont = async ({ family, local, element: el, removeElement = tr
     // console.log(`Values (current / initial): ${el[property]} / ${initial}`);
     diff = el[property] - initial;
 
-    // document.fonts.delete(font);
+    if (deleteFont) document.fonts.delete(font);
 
     if (diff === 0) break;
     
@@ -90,6 +105,15 @@ const findFallbackFont = async ({ family, local, element: el, removeElement = tr
   throw new Error(`Could not find font adjust for "${family}": ${adjust} (${el[PROPERTY]} / ${initial})`);
 }
 
+/**
+ * Returns a string representing the CSS definition of a fallback fontface.
+ * @param {string} family - The font family the fallback font is for
+ * @param {Object} fallback - The fallback font
+ * @param {string} fallback.local - The local font to use as fallback
+ * @param {string} fallback.adjust - The size-adjust value
+ * @param {string} fallback.name - The name of the fallback font
+ * @returns {string} - The CSS definition of the fallback fontface
+ */
 const getFontFaceOutput = (family, { name, adjust, local }) => {
   return `
   /* fallback font for ${family} */
@@ -100,6 +124,11 @@ const getFontFaceOutput = (family, { name, adjust, local }) => {
   }\n`;
 }
 
+/**
+ * Returns the elements of the document using the provided font family.
+ * @param {string} family - The font family to search for
+ * @returns {Array[Element]} - The elements using the provided font family
+ */
 const getElementsUsingFont = (family) => {
   console.log(`Searching for elements using font ${family}`);
   const elements = [];
@@ -117,4 +146,4 @@ const getElementsUsingFont = (family) => {
   return elements;
 }
 
-export { findFallbackFont, getFontFaceOutput, getElementsUsingFont };
+export { computeFallbackFont, getFontFaceOutput, getElementsUsingFont };
