@@ -36,6 +36,7 @@ const STEP_START = 0.1;
 const computeFallbackFont = async ({
   family, local, element: el, removeElement = true, property = 'offsetWidth', deleteFont = false,
 }) => {
+  // eslint-disable-next-line no-console
   console.log(`Attempt to find fallback for font ${family}`);
 
   if (!el) {
@@ -50,6 +51,7 @@ const computeFallbackFont = async ({
 
   const initial = el[property];
 
+  // eslint-disable-next-line no-console
   console.log(`Initial value for property ${property}: ${initial}`);
 
   const fallbackFont = `${family}-fallback`;
@@ -110,6 +112,8 @@ const computeFallbackFont = async ({
   }
 
   if (steps < MAX_STEPS) {
+    // eslint-disable-next-line no-console
+    console.log(`Computed fallback font ${fallbackFont}: adjust ${local} to ${adjust}% (in ${steps} steps)`);
     return {
       local,
       adjust,
@@ -143,7 +147,7 @@ const getFontFaceOutput = (family, { name, adjust, local }) => `
  * @returns {Array[Element]} - The elements using the provided font family
  */
 const getElementsUsingFont = (family) => {
-  console.log(`Searching for elements using font ${family}`);
+  // console.log(`Searching for elements using font ${family}`);
   const elements = [];
 
   const familyLC = family.toLowerCase().trim();
@@ -155,7 +159,7 @@ const getElementsUsingFont = (family) => {
     }
   });
 
-  console.log(`Found ${elements.length} elements.`, elements);
+  // console.log(`Found ${elements.length} elements.`, elements);
   return elements;
 };
 

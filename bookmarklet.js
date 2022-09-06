@@ -31,12 +31,14 @@ import { computeFallbackFont } from './js/logic/fonts.js';
     await asyncForEach(fonts, async (font) => {
       if (!font.includes('fallback')) {
         try {
+          // eslint-disable-next-line no-alert
           const local = window.prompt(`What is the default / local font to use as basis for ${font}?`, 'Arial');
           if (local) {
             fallbacks.push(await computeFallbackFont({ family: font, local }));
           }
         } catch (e) {
-          console.log(e);
+          // eslint-disable-next-line no-console
+          console.error(e);
         }
       }
     });
@@ -47,8 +49,10 @@ import { computeFallbackFont } from './js/logic/fonts.js';
   const main = async () => {
     const fallbacks = await findForAll();
 
+    // eslint-disable-next-line no-console
     console.log('Here are your fallbacks:');
     fallbacks.forEach((f) => {
+      // eslint-disable-next-line no-console
       console.log(`@font-face {
     font-family: "${f.name}";
     size-adjust: ${f.adjust}%;

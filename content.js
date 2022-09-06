@@ -75,9 +75,9 @@
       const { computeFallbackFont: cff } = await import(src);
 
       const font = await cff({ family, local });
-      console.log('Computed fallback font: ', font);
       return font;
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error(e);
       return { error: e.message };
     }
@@ -85,6 +85,7 @@
 
   chrome.runtime.onMessage.addListener(({ fct, params }, sender, sendResponse) => {
     const handleResponse = async () => {
+      // eslint-disable-next-line no-console
       console.log('Received message from extension', fct, params);
 
       let result;
@@ -100,7 +101,6 @@
         result = { error: 'Unknown function' };
       }
 
-      console.log('result in content window', result);
       sendResponse(result);
     };
     handleResponse();

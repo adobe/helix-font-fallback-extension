@@ -74,7 +74,8 @@ const log = async (a, b, c, d) => {
 
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    func(pa, pb, pc, pd) {
+    func: (pa, pb, pc, pd) => {
+      // eslint-disable-next-line no-console
       console.log('[from extension]', pa, pb, pc, pd);
     },
     args: [a || '', b || '', c || '', d || ''],
@@ -149,8 +150,6 @@ const compute = async (event) => {
     try {
       const result = await sendMessage({ fct: 'computeFallbackFont', params: { family, local } });
 
-      console.log('computeFallbackFont result', result);
-
       const { adjust, name, error } = result;
 
       if (error) {
@@ -167,8 +166,8 @@ const compute = async (event) => {
       checkbox.id = `simulate-${family}`;
       label.prepend(checkbox);
 
-      checkbox.addEventListener('change', async () => {
-        if (event.target.checked) {
+      checkbox.addEventListener('change', async (e) => {
+        if (e.target.checked) {
           await sendMessage({ fct: 'replaceFont', params: { current: family, replace: name } });
         } else {
           await sendMessage({ fct: 'removeFont', params: { remove: name } });
