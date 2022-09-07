@@ -59,8 +59,8 @@ const computeFallbackFont = async ({
   }
 
   el.style['font-family'] = `"${family}"`;
-  el.style['font-style'] = `"${style}"`;
-  el.style['font-weight'] = `"${weight}"`;
+  el.style['font-style'] = style;
+  el.style['font-weight'] = weight;
 
   const initial = el[property];
 
@@ -69,6 +69,8 @@ const computeFallbackFont = async ({
 
   const fallbackFont = `${id}-fallback`;
   el.style['font-family'] = `"${fallbackFont}"`;
+  el.style['font-style'] = '';
+  el.style['font-weight'] = '';
 
   let steps = 0;
   let adjust = ADJUST_START;
