@@ -24,19 +24,26 @@ import { computeFallbackFont, getFonts, getFontFaceOutput } from './js/logic/fon
 
     const fallbacks = [];
     await asyncForEach(fonts, async (font) => {
-      try {
-        // eslint-disable-next-line no-alert
-        const local = window.prompt(`What is the default / local font to use as basis for ${font.display}?`, 'Arial');
-        if (local) {
-          const fallback = await computeFallbackFont({ font, local });
-          fallbacks.push({
-            font,
-            fallback,
-          });
+      const unique = new Set();
+      const {
+        status, id,
+      } = font;
+      if (status === 'loaded' && !unique.has(id)) {
+        unique.add(id);
+        try {
+          // eslint-disable-next-line no-alert
+          const local = window.prompt(`What is the default / local font to use as basis for ${font.display}?`, 'Arial');
+          if (local) {
+            const fallback = await computeFallbackFont({ font, local });
+            fallbacks.push({
+              font,
+              fallback,
+            });
+          }
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(e);
         }
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(e);
       }
     });
 
@@ -48,10 +55,12 @@ import { computeFallbackFont, getFonts, getFontFaceOutput } from './js/logic/fon
 
     // eslint-disable-next-line no-console
     console.log('Here are your fallbacks:');
+    let out = '';
     fallbacks.forEach((f) => {
-      // eslint-disable-next-line no-console
-      console.log(getFontFaceOutput(f.font, f.fallback));
+      out += getFontFaceOutput(f.font, f.fallback);
     });
+    // eslint-disable-next-line no-console
+    console.log(out);
   };
 
   main();
