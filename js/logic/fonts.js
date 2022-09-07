@@ -9,6 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
+const getFontId = (font) => `${font.family}-${font.style}-${font.weight}`.toLocaleLowerCase().replace(/\s/g, '-');
+const getFontDisplay = (font) => `${font.family} (${font.style} - ${font.weight})`;
+
 const TEXT = 'Where does it come from? Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.';
 const MAX_STEPS = 1000;
 const ADJUST_START = 100;
@@ -34,10 +38,17 @@ const STEP_START = 0.1;
  * - steps: the number of steps needed to compute the fallback
  */
 const computeFallbackFont = async ({
-  family, local, element: el, removeElement = true, property = 'offsetWidth', deleteFont = false,
+  font, local, element: el, removeElement = true, property = 'offsetWidth', deleteFont = false,
 }) => {
+  const {
+    family, style, weight,
+  } = font;
+
+  const id = font.id || getFontId(font);
+  const display = font.display || getFontDisplay(font);
+
   // eslint-disable-next-line no-console
-  console.log(`Attempt to find fallback for font ${family}`);
+  console.log(`Attempt to find fallback for font ${display}`);
 
   if (!el) {
     el = document.createElement('p');
@@ -48,13 +59,15 @@ const computeFallbackFont = async ({
   }
 
   el.style['font-family'] = `"${family}"`;
+  el.style['font-style'] = `"${style}"`;
+  el.style['font-weight'] = `"${weight}"`;
 
   const initial = el[property];
 
   // eslint-disable-next-line no-console
   console.log(`Initial value for property ${property}: ${initial}`);
 
-  const fallbackFont = `${family}-fallback`;
+  const fallbackFont = `${id}-fallback`;
   el.style['font-family'] = `"${fallbackFont}"`;
 
   let steps = 0;
@@ -133,29 +146,37 @@ const computeFallbackFont = async ({
  * @param {string} fallback.name - The name of the fallback font
  * @returns {string} - The CSS definition of the fallback fontface
  */
-const getFontFaceOutput = (family, { name, adjust, local }) => `
-  /* fallback font for ${family} */
-  @font-face {
-    font-family: "${name}";
-    size-adjust: ${adjust}%;
-    src: local("${local}");
-  }\n`;
+const getFontFaceOutput = (font, { name, adjust, local }) => `
+    /* fallback font for ${font.display || getFontDisplay(font)} */
+    @font-face {
+      font-family: "${name}";
+      size-adjust: ${adjust}%;
+      src: local("${local}");
+    }\n`;
 
 /**
  * Returns the elements of the document using the provided font family.
  * @param {string} family - The font family to search for
  * @returns {Array[Element]} - The elements using the provided font family
  */
-const getElementsUsingFont = (family) => {
+const getElementsUsingFont = (family, style, weight) => {
   // console.log(`Searching for elements using font ${family}`);
   const elements = [];
 
   const familyLC = family.toLowerCase().trim();
-  document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, a, li, span').forEach((el) => {
+  document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, a, li, span, strong, em').forEach((el) => {
     const currentFamily = window.getComputedStyle(el).getPropertyValue('font-family').toLowerCase().trim();
 
     if (currentFamily.includes(familyLC)) {
-      elements.push(el);
+      if (style && weight) {
+        const currentStyle = window.getComputedStyle(el).getPropertyValue('font-style');
+        const currentWeight = window.getComputedStyle(el).getPropertyValue('font-weight');
+        if (style === currentStyle && weight === currentWeight) {
+          elements.push(el);
+        }
+      } else {
+        elements.push(el);
+      }
     }
   });
 
@@ -163,4 +184,27 @@ const getElementsUsingFont = (family) => {
   return elements;
 };
 
-export { computeFallbackFont, getFontFaceOutput, getElementsUsingFont };
+/**
+ * Returns all the fonts used on in the current document.
+ * @returns {Array[string]} - The list of font family
+ */
+const getFonts = () => {
+  const fonts = [];
+
+  document.fonts.forEach((font) => {
+    const {
+      family, status, style, weight,
+    } = font;
+    const id = getFontId(font);
+    if (!family.includes('fallback')) {
+      fonts.push({
+        family, status, style, weight, id, display: getFontDisplay(font),
+      });
+    }
+  });
+  return fonts;
+};
+
+export {
+  computeFallbackFont, getFontFaceOutput, getElementsUsingFont, getFonts,
+};

@@ -25,6 +25,14 @@
               Font family
               <input type="text" id="family" placeholder="Font Family" value="Montserrat" required>
             </label>
+            <label for="family">
+              Font style
+              <input type="text" id="style" placeholder="Font Style" value="Normal" required>
+            </label>
+            <label for="weight">
+              Font Weight
+              <input type="text" id="weight" placeholder="Font Weight" value="400" required>
+            </label>
             <label for="url">
               CSS with Font URL
               <input type="text" id="url" placeholder="Font URL" value="https://fonts.googleapis.com/css2?family=Montserrat">
@@ -60,6 +68,8 @@
         const generate = document.getElementById('generate');
         generate.addEventListener('click', () => {
           const family = document.getElementById('family').value;
+          const style = document.getElementById('style').value;
+          const weight = document.getElementById('weight').value;
           const url = document.getElementById('url').value;
           const local = document.getElementById('local').value;
           const lineHeight = document.getElementById('lineHeight').value;
@@ -67,6 +77,8 @@
           
           const target = new URL('./generate.html', window.location.href);
           target.searchParams.set('family', family);
+          target.searchParams.set('style', style);
+          target.searchParams.set('weight', weight);
           target.searchParams.set('url', url);
           target.searchParams.set('local', local);
           target.searchParams.set('lineHeight', lineHeight);

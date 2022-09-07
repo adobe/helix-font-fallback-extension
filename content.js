@@ -21,7 +21,7 @@
     const src = chrome.runtime.getURL('/js/logic/fonts.js');
     const { getElementsUsingFont } = await import(src);
 
-    getElementsUsingFont(current).forEach((el) => {
+    getElementsUsingFont(current.family, current.style, current.weight).forEach((el) => {
       el.style['font-family'] = `"${replace}"`;
     });
   };
@@ -45,16 +45,17 @@
    * Returns all the fonts used on in the current document.
    * @returns {Array[string]} - The list of font family
    */
-  const getFonts = () => {
-    const fonts = [];
+  const getFonts = async () => {
+    try {
+      const src = chrome.runtime.getURL('/js/logic/fonts.js');
+      const { getFonts: gf } = await import(src);
 
-    document.fonts.forEach(({ family }) => {
-      if (!family.includes('fallback') && !fonts.includes(family)) {
-        fonts.push(family);
-      }
-    });
-
-    return fonts.sort((a, b) => a.localeCompare(b));
+      return gf();
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+      return { error: e.message };
+    }
   };
 
   /**
@@ -69,13 +70,15 @@
    * - local: the local font used as fallback
    * - steps: the number of steps needed to compute the fallback
    */
-  const computeFallbackFont = async ({ family, local }) => {
+  const computeFallbackFont = async ({
+    font, local,
+  }) => {
     try {
       const src = chrome.runtime.getURL('/js/logic/fonts.js');
       const { computeFallbackFont: cff } = await import(src);
 
-      const font = await cff({ family, local });
-      return font;
+      const fallback = await cff({ font, local });
+      return fallback;
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error(e);
@@ -90,7 +93,7 @@
 
       let result;
       if (fct === 'getFonts') {
-        result = getFonts();
+        result = await getFonts();
       } else if (fct === 'replaceFont') {
         result = await replaceFont(params);
       } else if (fct === 'removeFont') {

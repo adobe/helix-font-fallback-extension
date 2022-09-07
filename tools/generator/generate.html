@@ -10,13 +10,15 @@
 
       // parameters
       const family = u.searchParams.get('family'); // your font family (required)
+      const style = u.searchParams.get('style'); // your font style (required)
+      const weight = u.searchParams.get('weight'); // your font weight (required)
       const url = u.searchParams.get('url') || ''; // your font url (optional)
       const local = u.searchParams.get('local') || 'Arial'; // local font fallback (optional / default: Arial)
       const lineHeight = u.searchParams.get('lineHeight') || '1.5em'; // text line height (optional / default: 1.5em)
       
       const text = u.searchParams.get('text') || DEFAULT_TEXT; // default text (optional)
       
-      const loadFont = (href, family, callback) => {
+      const loadFont = (href, callback) => {
         // delay font loading to detect CLS
         const link = document.createElement('link');
         link.rel = 'stylesheet';
@@ -25,17 +27,25 @@
         link.addEventListener('load', callback);
       }
 
-      loadFont(url, family, () => {
+      const font = {
+        family,
+        style,
+        weight,
+      };
+
+      loadFont(url, () => {
         window.setTimeout(() => {
           // const p = document.querySelector('p');
           document.querySelectorAll('p').forEach((p) => {
             p.style.lineHeight = lineHeight;
             p.style.fontFamily = `"${family}"`;
+            p.style.fontStyle = `"${style}"`;
+            p.style.fontWeight = `"${weight}"`;
             p.innerHTML = text;
 
             window.setTimeout(async () => {
               const fallback = await computeFallbackFont({
-                family,
+                font,
                 local,
                 element: p,
                 removeElement: false,
@@ -46,7 +56,7 @@
               c.className = 'result';
               
               const pre = document.createElement('pre');
-              pre.innerText = getFontFaceOutput(family, fallback);
+              pre.innerText = getFontFaceOutput(font, fallback);
               c.append(pre);
               document.body.appendChild(c);
             }, 500);

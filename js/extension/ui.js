@@ -11,7 +11,7 @@
  */
 import { getFontFaceOutput } from '../logic/fonts.js';
 
-let fonts = [];
+const loadedFonts = [];
 
 const LOADER_PANEL = document.getElementById('loader');
 const NOFONTS_PANEL = document.getElementById('nofonts');
@@ -26,6 +26,9 @@ const BACK_BUTTON = document.getElementById('back');
 const FONTS_GRID = document.querySelector('#fonts .grid');
 const RESULTS_CODE = document.querySelector('#results pre');
 const RESULTS_SIMULATION = document.querySelector('#results form');
+
+const FONTS_USED = document.getElementById('used');
+const FONTS_TOTAL = document.getElementById('total');
 
 /**
  * Async array forEach
@@ -89,7 +92,7 @@ const log = async (a, b, c, d) => {
  */
 const getLocalFontSelect = (id) => {
   const select = document.createElement('select');
-  select.id = `local-${id}`;
+  select.id = id;
   select.required = true;
 
   [{
@@ -139,16 +142,23 @@ const compute = async (event) => {
   RESULTS_SIMULATION.innerHTML = '';
   RESULTS_PANEL.classList.remove('hidden');
 
-  await asyncForEach(fonts, async (family) => {
-    const local = document.getElementById(`local-${family}`).value;
-    const doProcess = document.getElementById(`process-${family}`).checked;
+  await asyncForEach(loadedFonts, async (font) => {
+    const { id, display } = font;
+
+    const local = document.getElementById(`local-${id}`).value;
+    const doProcess = document.getElementById(`process-${id}`).checked;
 
     if (!doProcess) return;
 
-    log(`Computing fallback for ${family} with local ${local}`);
+    log(`Computing fallback for ${display} with local ${local}`);
 
     try {
-      const result = await sendMessage({ fct: 'computeFallbackFont', params: { family, local } });
+      const result = await sendMessage({
+        fct: 'computeFallbackFont',
+        params: {
+          font, local,
+        },
+      });
 
       const { adjust, name, error } = result;
 
@@ -156,19 +166,19 @@ const compute = async (event) => {
         throw new Error(error);
       }
 
-      RESULTS_CODE.innerHTML += getFontFaceOutput(family, { adjust, name, local });
+      RESULTS_CODE.innerHTML += getFontFaceOutput(font, { adjust, name, local });
 
       const label = document.createElement('label');
-      label.innerHTML = `Replace <b>${family}</b> by <b>${name}</b>`;
+      label.innerHTML = `Replace <b>${display}</b> by <b>${name}</b>`;
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
-      checkbox.id = `simulate-${family}`;
+      checkbox.id = `simulate-${id}`;
       label.prepend(checkbox);
 
       checkbox.addEventListener('change', async (e) => {
         if (e.target.checked) {
-          await sendMessage({ fct: 'replaceFont', params: { current: family, replace: name } });
+          await sendMessage({ fct: 'replaceFont', params: { current: font, replace: name } });
         } else {
           await sendMessage({ fct: 'removeFont', params: { remove: name } });
         }
@@ -176,7 +186,7 @@ const compute = async (event) => {
 
       RESULTS_SIMULATION.append(label);
     } catch (error) {
-      RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${family}: \n${error}\n\n`;
+      RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${display}: \n${error}\n\n`;
     }
   });
   RESULTS_CODE.innerHTML += '\n';
@@ -217,31 +227,40 @@ const load = async () => {
     files: ['./content.js'],
   });
 
-  fonts = (await sendMessage({ fct: 'getFonts' })) || [];
+  const allFonts = (await sendMessage({ fct: 'getFonts' })) || [];
 
-  log('fonts', fonts);
+  log('allFonts', allFonts);
 
   LOADER_PANEL.classList.add('hidden');
-  if (fonts.length > 0) {
+  if (allFonts.length > 0) {
     COMPUTE_BUTTON.addEventListener('click', compute);
     COPY_BUTTON.addEventListener('click', copy);
     BACK_BUTTON.addEventListener('click', back);
-    fonts.forEach((family) => {
-      const id = family;
-      const label = document.createElement('label');
-      label.for = id;
-      label.innerText = `${family}`;
+    const unique = new Set();
+    allFonts.forEach((font) => {
+      const {
+        status, id, display,
+      } = font;
+      if (status === 'loaded' && !unique.has(id)) {
+        unique.add(id);
+        loadedFonts.push(font);
+        const label = document.createElement('label');
+        label.for = id;
+        label.innerText = display;
 
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.id = `process-${family}`;
-      checkbox.checked = true;
-      label.prepend(checkbox);
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `process-${id}`;
+        checkbox.checked = true;
+        label.prepend(checkbox);
 
-      const select = getLocalFontSelect(id);
-      label.appendChild(select);
-      FONTS_GRID.append(label);
+        const select = getLocalFontSelect(`local-${id}`);
+        label.appendChild(select);
+        FONTS_GRID.append(label);
+      }
     });
+    FONTS_USED.innerHTML = loadedFonts.length;
+    FONTS_TOTAL.innerHTML = allFonts.length;
     FONTS_PANEL.classList.remove('hidden');
   } else {
     log('No fonts found');
