@@ -63,12 +63,14 @@
           const url = document.getElementById('url').value;
           const local = document.getElementById('local').value;
           const lineHeight = document.getElementById('lineHeight').value;
+          const text = document.getElementById('text').value;
           
           const target = new URL('./generate.html', window.location.href);
           target.searchParams.set('family', family);
           target.searchParams.set('url', url);
           target.searchParams.set('local', local);
           target.searchParams.set('lineHeight', lineHeight);
+          target.searchParams.set('text', text);
           window.open(target.href, 'fontpreview');
         });
       </script>
