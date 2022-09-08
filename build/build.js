@@ -14,7 +14,7 @@
 const fs = require('fs-extra');
 const archiver = require('archiver');
 
-const supportedBrowsers = ['chrome', 'safari', 'firefox'];
+const supportedBrowsers = ['chrome'];
 
 async function copyResources(browser) {
   const sourceDir = './src/extension';

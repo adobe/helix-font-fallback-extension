@@ -1,6 +1,6 @@
 {
   "name": "Font fallback",
-  "description": "Compute font fallbacks for a given font family and font weight.",
+  "description": "Computes the font fallbacks for all the fonts loaded on the current webpage. This is helpful to prevent CLS (Web Vitals).",
   "version": "1.0",
   "manifest_version": 3,
   "background": {

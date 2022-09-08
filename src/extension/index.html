@@ -11,11 +11,12 @@
   <body>
     <main class="container">
       <h1>Font Fallback</h1>
-      <p>Compute the ideal font fallback for the current site to prevent <a href="https://web.dev/cls/" target="_blank">CLS</a>.</p>
+      <p>Computes the font fallbacks for all the fonts loaded on the current webpage. This is helpful to prevent <a href="https://web.dev/cls/" target="_blank">CLS</a> (Web Vitals).</p>
       <div id="loader">Analysing current site fonts... <progress indeterminate="true"></progress></div>
       <div id="fonts" class="hidden">
         <form>
-          <p>Specify the best default font to use - visually the closest to the site font (<span id="used"></span> font faces used in page / <span id="total"></span> total font faces declared):</p>
+          <p>Specify the best default font to use - visually the closest to the site font.</p>
+          <p>On the current page, <span id="used"></span> font faces are used / <span id="total"></span> font faces are declared.</p>
           <div class="grid"></div>
           <a href="#" role="button" id="compute">Compute fallback fonts</a>
         </form>
