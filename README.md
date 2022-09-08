@@ -1,9 +1,9 @@
 # Font fallback
 
-Computes the fallback font for all the fonts used on a page in order to preserve the [CLS](https://web.dev/cls/).
+Computes a fallback font for all the fonts used on a page in order to preserve the [CLS](https://web.dev/cls/).
 
 Detailled explanations: https://www.industrialempathy.com/posts/high-performance-web-font-loading/
-Code is inspired from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat
+The code is inspired from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat and https://github.com/googlefonts/cls_calculator
 
 ## Usage
 
@@ -49,7 +49,7 @@ Form parameters:
 
 ### Font Fallback generator
 
-https://main--font-fallback--kptdobe.hlx.live/tools/simulator/generator.html
+https://main--font-fallback--kptdobe.hlx.live/tools/generator/index.html
 
 The Font Fallback generator exposes the same logic that runs behind the Chrome extension or the bookmarklet. Only difference here is that you have to specify the entry parameters manually.
 It is useful to test the font fallback computation with different fonts or especially on a diffent text: the length of the text and the character instances used have a direct impact on the `size-adjust` that will be computed - you can here specify your own text (most likely the one you have on your website).
@@ -63,8 +63,6 @@ Form parameters:
 - `Text`: the text used to compute the font fallback.
 
 ## Take aways from project
-
-This project is highly inspired from the work done here: https://www.industrialempathy.com/posts/high-performance-web-font-loading/.
 
 ### The algorithm
 
@@ -81,9 +79,15 @@ It might be obvious (was not to me) but the text to run the font fallback comput
 
 ### Height does not really matters
 
-If the paragraph (or heading or list items...) is an fixed width container, the text might go the next line and push down the next elements. Similar to the previous point, it highly depends on the text and the character instances used to compute the size adjustement. Except if you have a huge parapraph, the probably is also lower and we can consider to ignore the height during the computation. If this is an issue, you should probably tweak the font fallback on the exact text used (most likely decrease the size adjust to reduce the number of extra lines created).
+If the paragraph (or heading or list items...) is an fixed width container, the text might go the next line and push down the next elements. Similar to the previous point, it highly depends on the text and the character instances used to compute the size adjustement. Except if you have a huge parapraph, the probability is also lower and we can consider to ignore the height during the computation. If this is an issue, you should probably tweak the font fallback on the exact text used (most likely decrease the size adjust to reduce the number of extra lines created).
 If the container width is small but there is a lot of text and spacing, this can be tricky.
 
-# Weight or not weight
+# Family, style and weight
 
-The font weight definitively has an impact on the "space" that the font occupies. But... the weight might be managed with a different font face and finding a fallback for all weights of a font can be tricky. For example, Arial offers 400 and 700 but you might want to use Arial Black font for a weight of 900. Having a generic rule or a tool that allows all the possible config here is not simple. We'll focus here only on the family, not the weight.
+The font world is pretty complex and looking at many websites, each front end developer or designer will manage the fonts and how they use them differently. This extension focuses on the font family combined with the font style (normal, italic...) and weight (100 to 900) to compute a fallback font face per combination. But there might be other dimensions, especially the unicode range. Font makers tend to group the unicode ranges together and generate different font faces with different ranges. One example:
+
+https://fonts.googleapis.com/css2?family=Montserrat gives you 5 font faces for one family, style and weight combo (Montserrat, normal, 400). Creating a font face fallback for each of them will generate a huge number of font faces. 
+
+The extension performs the computation only on the font faces with `status === "loaded"`. On average, a webpage seems to be using less than 10% of the font faces it is asked to load!
+
+Another example: https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;1,400 - Fire Sans with normal and italic style for a 400 weight. This CSS generates 14 font faces. On a English website, only 2 of those might be really useful. Here the extension will probably only compute 2 fallbacks.
