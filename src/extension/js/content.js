@@ -18,7 +18,7 @@
    * @param {string} params.replace - The font family to replace with
    */
   const replaceFont = async ({ current, replace }) => {
-    const src = chrome.runtime.getURL('/js/logic/fonts.js');
+    const src = chrome.runtime.getURL('/js/shared/fonts.js');
     const { getElementsUsingFont } = await import(src);
 
     getElementsUsingFont(current.family, current.style, current.weight).forEach((el) => {
@@ -33,7 +33,7 @@
    * @param {string} params.remove - The font family to remove
    */
   const removeFont = async ({ remove }) => {
-    const src = chrome.runtime.getURL('/js/logic/fonts.js');
+    const src = chrome.runtime.getURL('/js/shared/fonts.js');
     const { getElementsUsingFont } = await import(src);
 
     getElementsUsingFont(remove).forEach((el) => {
@@ -47,7 +47,7 @@
    */
   const getFonts = async () => {
     try {
-      const src = chrome.runtime.getURL('/js/logic/fonts.js');
+      const src = chrome.runtime.getURL('/js/shared/fonts.js');
       const { getFonts: gf } = await import(src);
 
       return gf();
@@ -74,7 +74,7 @@
     font, local,
   }) => {
     try {
-      const src = chrome.runtime.getURL('/js/logic/fonts.js');
+      const src = chrome.runtime.getURL('/js/shared/fonts.js');
       const { computeFallbackFont: cff } = await import(src);
 
       const fallback = await cff({ font, local });

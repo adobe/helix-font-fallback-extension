@@ -4,12 +4,12 @@
   "version": "1.0",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "js/background.js"
   },
   "action": {},
   "permissions": ["storage", "scripting", "unlimitedStorage"],
   "web_accessible_resources": [{
-    "resources": ["js/logic/fonts.js"],
+    "resources": ["js/shared/fonts.js"],
     "matches": ["*://*/*"]
   }],
   "host_permissions": ["*://*/"]

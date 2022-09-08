@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-font-fallback-extension",
-  "version": "5.9.0",
+  "version": "1.0.0",
   "description": "Helix Font Fallback Extension",
   "scripts": {
     "lint": "./node_modules/.bin/eslint .",

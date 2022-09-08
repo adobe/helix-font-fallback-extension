@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { getFontFaceOutput } from '../logic/fonts.js';
+import { getFontFaceOutput } from './shared/fonts.js';
 
 const loadedFonts = [];
 
@@ -224,7 +224,7 @@ const load = async () => {
 
   await chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    files: ['./content.js'],
+    files: ['/js/content.js'],
   });
 
   const allFonts = (await sendMessage({ fct: 'getFonts' })) || [];

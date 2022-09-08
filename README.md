@@ -1,6 +1,6 @@
 # Font fallback
 
-Computes a fallback font for all the fonts used on a page in order to preserve the [CLS](https://web.dev/cls/).
+Chrome extension (and some utils) that computes a fallback font for all the fonts used on a page - this is helper to preserve the [CLS](https://web.dev/cls/).
 
 Detailled explanations: https://www.industrialempathy.com/posts/high-performance-web-font-loading/
 The code is inspired from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat and https://github.com/googlefonts/cls_calculator
@@ -22,7 +22,7 @@ Add the following bookmarklet to your browser:
 javascript: (() => {
   const s = document.createElement('script');
   s.type = 'module';
-  s.src = 'https://main--helix-font-fallback-extension--adobe.hlx.live/bookmarklet.js';
+  s.src = 'https://main--helix-font-fallback-extension--adobe.hlx.live/src/bookmarklet.js';
   document.head.append(s);
 })();
 ```
@@ -82,7 +82,7 @@ It might be obvious (was not to me) but the text to run the font fallback comput
 If the paragraph (or heading or list items...) is an fixed width container, the text might go the next line and push down the next elements. Similar to the previous point, it highly depends on the text and the character instances used to compute the size adjustement. Except if you have a huge parapraph, the probability is also lower and we can consider to ignore the height during the computation. If this is an issue, you should probably tweak the font fallback on the exact text used (most likely decrease the size adjust to reduce the number of extra lines created).
 If the container width is small but there is a lot of text and spacing, this can be tricky.
 
-# Family, style and weight
+### Family, style and weight
 
 The font world is pretty complex and looking at many websites, each front end developer or designer will manage the fonts and how they use them differently. This extension focuses on the font family combined with the font style (normal, italic...) and weight (100 to 900) to compute a fallback font face per combination. But there might be other dimensions, especially the unicode range. Font makers tend to group the unicode ranges together and generate different font faces with different ranges. One example:
 
