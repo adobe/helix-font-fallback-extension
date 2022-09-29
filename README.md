@@ -9,6 +9,12 @@ The code is inspired from https://www.industrialempathy.com/perfect-ish-font-fal
 
 ### As a Chrome extension
 
+Install the extension from the Google Store: https://chrome.google.com/webstore/detail/helix-font-fallback/deceeoanicnkoieibbfellglginplfbm?hl=en
+
+### As an unpacked Chrome extension
+
+Useful for development too.
+
 ```
 git clone https://github.com/adobe/helix-font-fallback-extension
 ```
