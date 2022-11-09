@@ -46,23 +46,38 @@ On any website, run the bookmarklet and check the console for the output. The ge
 Using one of the 3 methods above, you will get some css. Example:
 
 ```css
-/* fallback font for Montserrat (normal - 400) */
+/* fallback font for adobe-clean (normal - 400) */
 @font-face {
-  font-family: "montserrat-normal-400-fallback";
-  size-adjust: 111.311%;
+  font-family: "adobe-clean-normal-400-fallback";
+  size-adjust: 90.129%;
+  src: local("Arial");
+}
+
+/* fallback font for adobe-clean (normal - 700) */
+@font-face {
+  font-family: "adobe-clean-normal-700-fallback";
+  size-adjust: 93.939%;
   src: local("Arial");
 }
 ```
 
-This is a font fallback based on Arial for the Google Montserrat font (weight 400). Paste this CSS at the beginning of your main CSS. Add the fallback font to the font family of your body tag (or any element requiring the font), something like:
+These 2 fallback fonts are based on Arial for the Adobe Clean font (weight 400 and 700).
+
+Paste this CSS at the beginning of your main CSS.
+
+Add the fallback fonts to the font family of your body tag (or any element requiring the font - weight 400) and / or your headings (weight 700), something like:
 
 ```css
 body {
-  font-family: Montserrat, "montserrat-normal-400-fallback";
+  font-family: Adobe Clean, "adobe-clean-normal-400-fallback";
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Adobe Clean, "adobe-clean-normal-700-fallback";
 }
 ```
 
-Once your page loads, the browser does not find the `Montserra` font immediately, thus it uses the `montserrat-normal-400-fallback` fallback font (= re-sized `Arial`). You can now defer the load of your Google font (and not block your page loading sequence) and once loaded, browser will use it. The swap of the fonts will not cause any CLS problem because the 2 fonts have approximatively the same size.
+Once your page loads, the browser may not find the `Adobe Clean` font immediately, thus it uses the fallback fonts (= re-sized `Arial`). You can now defer the load of your Adobe Clean font (and not block your page loading sequence). Once loaded, browser will use them. The swap of the fonts will not cause any CLS problem because the 2 fonts have approximatively the same size.
 
 See the [#Takeaways from project](https://github.com/adobe/helix-font-fallback-extension/edit/main/README.md#takeaways-from-project) below to understand the limits.
 
@@ -123,7 +138,7 @@ If the container width is small but there is a lot of text and spacing, this can
 
 The font world is pretty complex and looking at many websites, each front end developer or designer will manage the fonts and how they use them differently. This extension focuses on the font family combined with the font style (normal, italic...) and weight (100 to 900) to compute a fallback font face per combination. But there might be other dimensions, especially the unicode range. Font makers tend to group the unicode ranges together and generate different font faces with different ranges. One example:
 
-https://fonts.googleapis.com/css2?family=Montserrat gives you 5 font faces for one family, style and weight combo (Montserrat, normal, 400). Creating a font face fallback for each of them will generate a huge number of font faces. 
+https://fonts.apis.com/css2?family=Montserrat gives you 5 font faces for one family, style and weight combo (Montserrat, normal, 400). Creating a font face fallback for each of them will generate a huge number of font faces. 
 
 The extension performs the computation only on the font faces with `status === "loaded"`. On average, a webpage seems to be using less than 10% of the font faces it is asked to load!
 
