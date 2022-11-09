@@ -9,11 +9,13 @@ The Font fallback tool analyses the fonts on the current page and for each custo
 
 ## Usage
 
-### As a Chrome extension
+### Compute the font fallback
+
+#### With the Chrome extension
 
 Install the extension from the Google Store: https://chrome.google.com/webstore/detail/helix-font-fallback/deceeoanicnkoieibbfellglginplfbm?hl=en
 
-### As an unpacked Chrome extension
+#### With an unpacked Chrome extension
 
 Useful for development too.
 
@@ -23,7 +25,9 @@ git clone https://github.com/adobe/helix-font-fallback-extension
 
 Load the extension as an local unpacked extension - see [instructions here](https://developer.chrome.com/docs/extensions/mv3/getstarted/#unpacked)
 
-### As a bookmarklet
+#### With the bookmarklet
+
+For developers.
 Add the following bookmarklet to your browser:
 
 ```js
@@ -36,6 +40,31 @@ javascript: (() => {
 ```
 
 On any website, run the bookmarklet and check the console for the output. The generated fontfaces can be used as fallback font until the real font is loaded and still preserve the [CLS](https://web.dev/cls/).
+
+### Use the font fallback
+
+Using one of the 3 methods above, you will get some css. Example:
+
+```css
+/* fallback font for Montserrat (normal - 400) */
+@font-face {
+  font-family: "montserrat-normal-400-fallback";
+  size-adjust: 111.311%;
+  src: local("Arial");
+}
+```
+
+This is a font fallback based on Arial for the Google Montserrat font (weight 400). Paste this CSS at the beginning of your main CSS. Add the fallback font to the font family of your body tag (or any element requiring the font), something like:
+
+```css
+body {
+  font-family: Montserrat, "montserrat-normal-400-fallback";
+}
+```
+
+Once your page loads, the browser does not find the `Montserra` font immediately, thus it uses the `montserrat-normal-400-fallback` fallback font (= re-sized `Arial`). You can now defer the load of your Google font (and not block your page loading sequence) and once loaded, browser will use it. The swap of the fonts will not cause any CLS problem because the 2 fonts have approximatively the same size.
+
+See the [#Takeaways from project](https://github.com/adobe/helix-font-fallback-extension/edit/main/README.md#takeaways-from-project) below to understand the limits.
 
 ## Tools
 
@@ -70,7 +99,7 @@ Form parameters:
 - `Text Line Height`: the text line height you are using
 - `Text`: the text used to compute the font fallback.
 
-## Take aways from project
+## Takeaways from project
 
 ### The algorithm
 
