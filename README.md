@@ -5,6 +5,8 @@ Chrome extension (and some utils) that computes a fallback font for all the font
 Detailled explanations: https://www.industrialempathy.com/posts/high-performance-web-font-loading/
 The code is inspired from https://www.industrialempathy.com/perfect-ish-font-fallback/?font=Montserrat and https://github.com/googlefonts/cls_calculator
 
+The Font fallback tool analyses the fonts on the current page and for each custom font can generate a font fallback for you. A font fallback is a browser standard font (like Arial) which requires no loading time, plus a size adjustment percentage which is computed to size the standard font to approximate the custom font. Like this, when the custom font is loaded, it can smoothly replace the standard font with no CLS, i.e. with no impact on the layout.
+
 ## Usage
 
 ### As a Chrome extension
