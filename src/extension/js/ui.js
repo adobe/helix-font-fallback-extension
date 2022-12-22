@@ -178,7 +178,7 @@ const compute = async (event) => {
 
       checkbox.addEventListener('change', async (e) => {
         if (e.target.checked) {
-          await sendMessage({ fct: 'replaceFont', params: { current: font, replace: name } });
+          await sendMessage({ fct: 'replaceFont', params: { current: font, replace: { adjust, name, local } } });
         } else {
           await sendMessage({ fct: 'removeFont', params: { remove: name } });
         }

@@ -47,6 +47,7 @@ const TEXT = 'Where does it come from? Contrary to popular belief, Lorem Ipsum i
 const MAX_STEPS = 1000;
 const ADJUST_START = 100;
 const STEP_START = 0.1;
+const PRECISION = 0.001;
 
 /**
  * Computes a fallback font for the given font family and the local font to use as basis.
@@ -56,7 +57,6 @@ const STEP_START = 0.1;
  * @param {Element} [config.elememt] - The DOM element used to compute the fallback
  * - if not provided, the function will create one
  * @param {boolean} [config.removeElement] - Remove the element after computation (default: true)
- * @param {boolean} [config.deleteFont] - Remove the fallback fontface inserted
  * into the document (default: false)
  * @param {string} [config.property] - The CSS property to use
  * for the computation (default: 'offsetWidth')
@@ -68,7 +68,7 @@ const STEP_START = 0.1;
  * - steps: the number of steps needed to compute the fallback
  */
 const computeFallbackFont = async ({
-  font, local, element: el, removeElement = true, property = 'offsetWidth', deleteFont = false,
+  font, local, element: el, removeElement = true, property = 'offsetWidth',
 }) => {
   const {
     family, style, weight,
@@ -122,7 +122,7 @@ const computeFallbackFont = async ({
     // console.log(`Values (current / initial): ${el[property]} / ${initial}`);
     diff = el[property] - initial;
 
-    if (deleteFont) document.fonts.delete(fontface);
+    document.fonts.delete(fontface);
 
     if (diff === 0) break;
 
@@ -150,7 +150,7 @@ const computeFallbackFont = async ({
     adjusts.push(adjust);
 
     steps += 1;
-  } while (steps < MAX_STEPS && step > 0.001);
+  } while (steps < MAX_STEPS && step > PRECISION);
 
   if (removeElement) {
     el.remove();
