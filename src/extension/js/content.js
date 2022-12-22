@@ -19,10 +19,16 @@
    */
   const replaceFont = async ({ current, replace }) => {
     const src = chrome.runtime.getURL('/js/shared/fonts.js');
+
+    // re-add font to keep font in the document
+    const fontface = new FontFace(replace.name, `local("${replace.local}")`, { sizeAdjust: `${replace.adjust}%` });
+    await fontface.load();
+    document.fonts.add(fontface);
+
     const { getElementsUsingFont } = await import(src);
 
     getElementsUsingFont(current.family, current.style, current.weight).forEach((el) => {
-      el.style['font-family'] = `"${replace}"`;
+      el.style['font-family'] = `"${replace.name}"`;
     });
   };
 
@@ -38,6 +44,12 @@
 
     getElementsUsingFont(remove).forEach((el) => {
       el.style.removeProperty('font-family');
+    });
+
+    Array.from(document.fonts).forEach((font) => {
+      if (font.family === remove) {
+        document.fonts.delete(font);
+      }
     });
   };
 

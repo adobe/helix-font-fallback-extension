@@ -178,11 +178,18 @@ const compute = async (event) => {
 
       checkbox.addEventListener('change', async (e) => {
         if (e.target.checked) {
-          await sendMessage({ fct: 'replaceFont', params: { current: font, replace: name } });
+          const simulAdjust = document.getElementById(`simulate-${id}-adjust`).value;
+          await sendMessage({ fct: 'replaceFont', params: { current: font, replace: { adjust: simulAdjust, name, local } } });
         } else {
           await sendMessage({ fct: 'removeFont', params: { remove: name } });
         }
       });
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = `simulate-${id}-adjust`;
+      input.value = adjust;
+      label.append(input);
 
       RESULTS_SIMULATION.append(label);
     } catch (error) {
@@ -251,7 +258,7 @@ const load = async () => {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.id = `process-${id}`;
-        checkbox.checked = true;
+        // checkbox.checked = true;
         label.prepend(checkbox);
 
         const select = getLocalFontSelect(`local-${id}`);
