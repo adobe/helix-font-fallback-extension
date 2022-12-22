@@ -10,8 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
-const getFontId = (font) => `${font.family}-${font.style}-${font.weight}`.toLocaleLowerCase().replace(/\s/g, '-');
-const getFontDisplay = (font) => `${font.family} (${font.style} - ${font.weight})`;
+const WEIGHT_MAPPING = {
+  'thin': 100,
+  'extra-light': 200,
+  'ultra-light': 200,
+  'light': 300,
+  'normal': 400,
+  'regular': 400,
+  'medium': 500,
+  'semi-Bold': 600,
+  'demi-Bold': 600,
+  'bold': 700,
+  'extra-bold': 800,
+  'ultra-bold': 800,
+  'black': 900,
+}
+
+const getWeight = (weight) => {
+  if (!weight) return 400;
+
+  if (typeof weight === 'number') {
+    return weight;
+  }
+
+  if (typeof weight === 'string') {
+    return WEIGHT_MAPPING[weight.toLowerCase()] || 400;
+  }
+
+  return 400;
+}
+
+const getFontId = (font) => `${font.family}-${font.style}-${getWeight(font.weight)}`.toLocaleLowerCase().replace(/\s/g, '-');
+const getFontDisplay = (font) => `${font.family} (${font.style} - ${getWeight(font.weight)})`;
 
 const TEXT = 'Where does it come from? Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.';
 const MAX_STEPS = 1000;
@@ -60,7 +90,7 @@ const computeFallbackFont = async ({
 
   el.style['font-family'] = `"${family}"`;
   el.style['font-style'] = style;
-  el.style['font-weight'] = weight;
+  el.style['font-weight'] = getWeight(weight);
 
   const initial = el[property];
 
@@ -171,9 +201,10 @@ const getElementsUsingFont = (family, style, weight) => {
 
     if (currentFamily.includes(familyLC)) {
       if (style && weight) {
+        const w = getWeight(weight);
         const currentStyle = window.getComputedStyle(el).getPropertyValue('font-style');
         const currentWeight = window.getComputedStyle(el).getPropertyValue('font-weight');
-        if (style === currentStyle && weight === currentWeight) {
+        if (style === currentStyle && w === getWeight(currentWeight)) {
           elements.push(el);
         }
       } else {
@@ -200,7 +231,7 @@ const getFonts = () => {
     const id = getFontId(font);
     if (!family.includes('fallback')) {
       fonts.push({
-        family, status, style, weight, id, display: getFontDisplay(font),
+        family, status, style, weight: getWeight(weight), id, display: getFontDisplay(font),
       });
     }
   });
