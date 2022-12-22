@@ -11,20 +11,20 @@
  */
 
 const WEIGHT_MAPPING = {
-  'thin': 100,
+  thin: 100,
   'extra-light': 200,
   'ultra-light': 200,
-  'light': 300,
-  'normal': 400,
-  'regular': 400,
-  'medium': 500,
-  'semi-Bold': 600,
-  'demi-Bold': 600,
-  'bold': 700,
+  light: 300,
+  normal: 400,
+  regular: 400,
+  medium: 500,
+  'semi-bold': 600,
+  'demi-bold': 600,
+  bold: 700,
   'extra-bold': 800,
   'ultra-bold': 800,
-  'black': 900,
-}
+  black: 900,
+};
 
 const getWeight = (weight) => {
   if (!weight) return 400;
@@ -38,7 +38,7 @@ const getWeight = (weight) => {
   }
 
   return 400;
-}
+};
 
 const getFontId = (font) => `${font.family}-${font.style}-${getWeight(font.weight)}`.toLocaleLowerCase().replace(/\s/g, '-');
 const getFontDisplay = (font) => `${font.family} (${font.style} - ${getWeight(font.weight)})`;
