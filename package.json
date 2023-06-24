@@ -44,7 +44,7 @@
     "lint-staged": "13.2.2",
     "semantic-release": "21.0.5",
     "shelljs": "0.8.5",
-    "sinon": "15.1.2"
+    "sinon": "15.2.0"
   },
   "lint-staged": {
     "*.js": "eslint"
