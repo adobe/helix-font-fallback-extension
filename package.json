@@ -26,7 +26,7 @@
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.6",
     "@adobe/helix-fetch": "3.1.2",
-    "@babel/eslint-parser": "7.23.9",
+    "@babel/eslint-parser": "7.23.10",
     "@esm-bundle/chai": "4.3.4-fix.0",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/exec": "6.0.3",
@@ -41,7 +41,7 @@
     "eslint-plugin-import": "2.29.1",
     "express": "4.18.2",
     "fs-extra": "11.2.0",
-    "lint-staged": "15.2.0",
+    "lint-staged": "15.2.1",
     "semantic-release": "23.0.0",
     "shelljs": "0.8.5",
     "sinon": "17.0.1"
