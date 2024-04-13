@@ -42,7 +42,7 @@
     "express": "4.19.2",
     "fs-extra": "11.2.0",
     "lint-staged": "15.2.2",
-    "semantic-release": "23.0.0",
+    "semantic-release": "23.0.8",
     "shelljs": "0.8.5",
     "sinon": "17.0.1"
   },
