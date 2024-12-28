@@ -41,7 +41,7 @@
     "eslint-plugin-import": "2.31.0",
     "express": "4.21.2",
     "fs-extra": "11.2.0",
-    "lint-staged": "15.2.11",
+    "lint-staged": "15.3.0",
     "semantic-release": "24.2.0",
     "shelljs": "0.8.5",
     "sinon": "18.0.1"
