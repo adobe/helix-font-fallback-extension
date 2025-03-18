@@ -1,7 +1,7 @@
 {
   "name": "Helix Font Fallback",
   "description": "Helix Font Fallback computes the fallback fonts for all the fonts loaded on the page. This is helpful to prevent CLS (Web Vitals).",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "manifest_version": 3,
   "background": {
     "service_worker": "js/background.js"
