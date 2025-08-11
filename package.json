@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/adobe/helix-font-fallback-extension#readme",
   "devDependencies": {
-    "@adobe/eslint-config-helix": "2.0.9",
+    "@adobe/eslint-config-helix": "3.0.9",
     "@adobe/fetch": "4.2.2",
     "@babel/eslint-parser": "7.28.0",
     "@esm-bundle/chai": "4.3.4-fix.0",
