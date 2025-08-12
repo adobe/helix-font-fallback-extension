@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+/* eslint-disable no-param-reassign */
 const WEIGHT_MAPPING = {
   thin: 100,
   'extra-light': 200,
