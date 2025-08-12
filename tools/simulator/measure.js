@@ -17,6 +17,7 @@ new PerformanceObserver((entryList) => {
     window.cls += entry.value;
     entry.sources.forEach((source) => {
       if (window.markers !== 'no' && source.node?.style) {
+        // eslint-disable-next-line no-param-reassign
         source.node.style.border = '1px solid red';
       }
     });

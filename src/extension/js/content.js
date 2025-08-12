@@ -28,6 +28,7 @@
     const { getElementsUsingFont } = await import(src);
 
     getElementsUsingFont(current.family, current.style, current.weight).forEach((el) => {
+      // eslint-disable-next-line no-param-reassign
       el.style['font-family'] = `"${replace.name}"`;
     });
   };
