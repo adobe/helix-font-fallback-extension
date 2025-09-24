@@ -51,7 +51,7 @@ window.setInterval(() => {
     c.style['background-color'] = 'lightgreen';
   }
 
-  c.innerHTML = `Current CLS value: ${displayCLS}`;
+  c.textContent = `Current CLS value: ${displayCLS}`;
 
   if (window.markers !== 'no') {
     const lh = new URL('https://pagespeed.web.dev/report');
@@ -60,6 +60,11 @@ window.setInterval(() => {
 
     lh.searchParams.append('url', current.href);
 
-    c.innerHTML += `<br><a target="_new" href="${lh.href}">Compare with "real" CLS</a>`;
+    const link = document.createElement('a');
+    link.target = '_new';
+    link.href = lh.href;
+    link.textContent = 'Compare with "real" CLS';
+    c.appendChild(document.createElement('br'));
+    c.appendChild(link);
   }
 }, 2000);

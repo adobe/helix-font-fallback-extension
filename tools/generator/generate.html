@@ -38,10 +38,10 @@
           // const p = document.querySelector('p');
           document.querySelectorAll('p').forEach((p) => {
             p.style.lineHeight = lineHeight;
-            p.style.fontFamily = `"${family}"`;
-            p.style.fontStyle = `"${style}"`;
-            p.style.fontWeight = `"${weight}"`;
-            p.innerHTML = text;
+            p.style.fontFamily = `"${CSS.escape(family)}"`;
+            p.style.fontStyle = CSS.escape(style);
+            p.style.fontWeight = CSS.escape(weight);
+            p.textContent = text;
 
             window.setTimeout(async () => {
               const fallback = await computeFallbackFont({

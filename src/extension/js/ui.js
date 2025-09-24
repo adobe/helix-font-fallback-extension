@@ -122,7 +122,7 @@ const getLocalFontSelect = (id) => {
   }].forEach((font) => {
     const option = document.createElement('option');
     option.value = font.name;
-    option.innerHTML = `${font.name} (${font.cat})`;
+    option.textContent = `${font.name} (${font.cat})`;
     select.appendChild(option);
   });
 
@@ -138,8 +138,8 @@ const compute = async (event) => {
 
   FONTS_PANEL.classList.add('hidden');
   COMPUTING_PANEL.classList.remove('hidden');
-  RESULTS_CODE.innerHTML = '';
-  RESULTS_SIMULATION.innerHTML = '';
+  RESULTS_CODE.textContent = '';
+  RESULTS_SIMULATION.textContent = '';
   RESULTS_PANEL.classList.remove('hidden');
 
   await asyncForEach(loadedFonts, async (font) => {
@@ -166,10 +166,17 @@ const compute = async (event) => {
         throw new Error(error);
       }
 
-      RESULTS_CODE.innerHTML += getFontFaceOutput(font, { adjust, name, local });
+      RESULTS_CODE.textContent += getFontFaceOutput(font, { adjust, name, local });
 
       const label = document.createElement('label');
-      label.innerHTML = `Replace <b>${display}</b> by <b>${name}</b>`;
+      const displaySpan = document.createElement('b');
+      displaySpan.textContent = display;
+      const nameSpan = document.createElement('b');
+      nameSpan.textContent = name;
+      label.appendChild(document.createTextNode('Replace '));
+      label.appendChild(displaySpan);
+      label.appendChild(document.createTextNode(' by '));
+      label.appendChild(nameSpan);
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
@@ -193,10 +200,10 @@ const compute = async (event) => {
 
       RESULTS_SIMULATION.append(label);
     } catch (error) {
-      RESULTS_CODE.innerHTML += `Something went wrong while computing fallback for ${display}: \n${error}\n\n`;
+      RESULTS_CODE.textContent += `Something went wrong while computing fallback for ${display}: \n${error}\n\n`;
     }
   });
-  RESULTS_CODE.innerHTML += '\n';
+  RESULTS_CODE.textContent += '\n';
 
   COPY_BUTTON.classList.remove('hidden');
   COMPUTING_PANEL.classList.add('hidden');
@@ -207,7 +214,7 @@ const compute = async (event) => {
  */
 const copy = async () => {
   const textarea = document.createElement('textarea');
-  textarea.value = RESULTS_CODE.innerHTML;
+  textarea.value = RESULTS_CODE.textContent;
   document.body.appendChild(textarea);
   textarea.select();
   document.execCommand('copy');
@@ -266,8 +273,8 @@ const load = async () => {
         FONTS_GRID.append(label);
       }
     });
-    FONTS_USED.innerHTML = loadedFonts.length;
-    FONTS_TOTAL.innerHTML = allFonts.length;
+    FONTS_USED.textContent = loadedFonts.length;
+    FONTS_TOTAL.textContent = allFonts.length;
     FONTS_PANEL.classList.remove('hidden');
   } else {
     log('No fonts found');
