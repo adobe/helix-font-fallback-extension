@@ -83,7 +83,7 @@ const computeFallbackFont = async ({
   if (!el) {
     el = document.createElement('p');
     document.body.append(el);
-    el.innerHTML = TEXT;
+    el.textContent = TEXT;
     el.style['white-space'] = 'pre';
     el.style.display = 'inline-block';
   }

@@ -35,11 +35,11 @@
         link.addEventListener('load', () => {
           window.setTimeout(() => {
             const p = document.createElement('p');
-            p.style.fontFamily = `"${family}"`;
-            p.innerHTML = 'preloading font to avoid extra CLS on slow network...'; 
+            p.style.fontFamily = `"${CSS.escape(family)}"`;
+            p.textContent = 'preloading font to avoid extra CLS on slow network...'; 
             document.body.append(p);
             window.setTimeout(() => {
-              document.body.style.fontFamily = `"${family}"`;
+              document.body.style.fontFamily = `"${CSS.escape(family)}"`;
               p.remove();
             }, 500);
           }, 500);
@@ -59,7 +59,7 @@
       document.body.style.margin = "auto";
       document.body.style.width = width;
       document.body.style.lineHeight = lineHeight;
-      document.body.style.fontFamily = `${family}-fallback`;
+      document.body.style.fontFamily = `${CSS.escape(family)}-fallback`;
     </script>
     <div>
       <h1>Sample page content</h1>

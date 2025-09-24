@@ -34,7 +34,7 @@ Add the following bookmarklet to your browser:
 javascript: (() => {
   const s = document.createElement('script');
   s.type = 'module';
-  s.src = 'https://main--helix-font-fallback-extension--adobe.hlx.live/src/bookmarklet.js';
+  s.src = 'https://main--helix-font-fallback-extension--adobe.aem.live/src/bookmarklet.js';
   document.head.append(s);
 })();
 ```
@@ -85,7 +85,7 @@ See the [#Takeaways from project](https://github.com/adobe/helix-font-fallback-e
 
 ### Font Fallback simulator
 
-https://main--helix-font-fallback-extension--adobe.hlx.live/tools/simulator/index.html
+https://main--helix-font-fallback-extension--adobe.aem.live/tools/simulator/index.html
 
 The Font Fallback simulator allows you the preview a font fallback "in action" and visualize the CLS that the real font loading would introduce. In the end, the CLS must be 0.
 The tool is usefull to fine tune the `size-adjust`, be more precise and to preview the CLS. From the preview window, you can directly go to the [PageSpeed insights](https://pagespeed.web.dev/report) report with your config. It should give you a more accurate CLS measurement.
@@ -101,7 +101,7 @@ Form parameters:
 
 ### Font Fallback generator
 
-https://main--helix-font-fallback-extension--adobe.hlx.live/tools/generator/index.html
+https://main--helix-font-fallback-extension--adobe.aem.live/tools/generator/index.html
 
 The Font Fallback generator exposes the same logic that runs behind the Chrome extension or the bookmarklet. Only difference here is that you have to specify the entry parameters manually.
 It is useful to test the font fallback computation with different fonts or especially on a diffent text: the length of the text and the character instances used have a direct impact on the `size-adjust` that will be computed - you can here specify your own text (most likely the one you have on your website).
